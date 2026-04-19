@@ -1,0 +1,1141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>WEDDING HQ — Page 02 — Home Dashboard</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400;1,600&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+/* ============================================================
+   DESIGN TOKENS — WEDDING HQ v2.0
+============================================================ */
+:root {
+  --paper:        #F8F5F0;
+  --surface:      #EDE6DB;
+  --surface-lt:   #F4EFE8;
+  --accent:       #A8B5A0;
+  --accent-dk:    #8A9882;
+  --accent-lt:    #D4DDCF;
+  --accent-xlt:   #EBF0E8;
+  --text:         #3A2F2A;
+  --header:       #5C4638;
+  --border:       #D9D0C4;
+  --border-lt:    #EAE4DA;
+  --muted:        #8A7E74;
+  --faint:        #B8AFA6;
+  --white:        #FFFFFF;
+  --nav-bg:       #2A1F18;
+  --serif:        'Playfair Display', Georgia, serif;
+  --sans:         'Inter', system-ui, sans-serif;
+  --r-xs:         4px;
+  --r-sm:         8px;
+  --r-md:         12px;
+  --r-lg:         20px;
+  --r-xl:         28px;
+  --margin:       64px;
+  --shadow-sm:    0 1px 4px rgba(58,47,42,0.06);
+  --shadow:       0 4px 16px rgba(58,47,42,0.08);
+  --shadow-lg:    0 16px 48px rgba(58,47,42,0.12);
+}
+
+/* ============================================================
+   SHELL
+============================================================ */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { background: var(--nav-bg); }
+body {
+  font-family: var(--sans);
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--text);
+  background: var(--nav-bg);
+  min-height: 100vh;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  padding: 28px 20px 60px;
+}
+h1,h2,h3,h4 { font-family: var(--serif); }
+button { font-family: var(--sans); cursor: pointer; }
+input, textarea { font-family: var(--sans); }
+
+/* ============================================================
+   PAGE CANVAS — iPad Portrait 4:3
+   Design size: 1600 × 2133px | displayed scaled to viewport
+============================================================ */
+#scale-wrap {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+}
+.page {
+  width: 1600px;
+  background: var(--paper);
+  box-shadow: var(--shadow-lg);
+  border-radius: 4px;
+  display: flex;
+  flex-direction: column;
+  transform-origin: top center;
+  /* height auto: content determines page length — Canva will lock to 2133px */
+}
+
+/* ============================================================
+   TOP BAR
+============================================================ */
+.top-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 var(--margin);
+  height: 60px;
+  border-bottom: 1px solid var(--border-lt);
+  flex-shrink: 0;
+}
+.top-bar-brand {
+  font-family: var(--serif);
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  color: var(--header);
+}
+.top-bar-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--muted);
+  background: none;
+  border: none;
+  padding: 6px 10px;
+  border-radius: var(--r-sm);
+  transition: color .15s, background .15s;
+  min-width: 80px;
+}
+.top-bar-btn.right { justify-content: flex-end; }
+.top-bar-btn:hover { color: var(--accent-dk); background: var(--surface); }
+.top-bar-btn svg { flex-shrink: 0; opacity: .75; }
+.top-bar-btn:hover svg { opacity: 1; }
+
+/* ============================================================
+   TAB BAR
+============================================================ */
+.tab-bar {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  padding: 10px var(--margin);
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+  flex-shrink: 0;
+}
+.tab {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 34px;
+  padding: 0 15px;
+  border-radius: 20px;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  background: var(--paper);
+  color: var(--muted);
+  border: 1px solid var(--border);
+  transition: all .15s;
+  white-space: nowrap;
+}
+.tab:hover { border-color: var(--accent); color: var(--accent-dk); }
+.tab.active {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: var(--white);
+  box-shadow: 0 2px 10px rgba(168,181,160,.3);
+}
+
+/* ============================================================
+   PAGE BODY
+============================================================ */
+.page-body {
+  flex: 1;
+  padding: 52px var(--margin) 56px;
+  display: flex;
+  flex-direction: column;
+  gap: 36px;
+}
+
+/* ============================================================
+   PAGE HEADER
+============================================================ */
+.page-header {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+}
+.page-eyebrow {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: 10px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.page-eyebrow::after {
+  content: '';
+  display: block;
+  width: 40px;
+  height: 1px;
+  background: var(--accent-lt);
+}
+.page-title {
+  font-size: 44px;
+  font-weight: 600;
+  font-style: italic;
+  color: var(--header);
+  line-height: 1.1;
+  letter-spacing: -0.015em;
+}
+.page-sub {
+  font-size: 14px;
+  color: var(--muted);
+  margin-top: 8px;
+  letter-spacing: 0.01em;
+}
+
+/* ============================================================
+   COUPLE STRIP
+============================================================ */
+.couple-strip {
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr;
+  gap: 0;
+  background: var(--white);
+  border: 1px solid var(--border);
+  border-radius: var(--r-md);
+  border-left: 4px solid var(--accent);
+  overflow: hidden;
+}
+.fill-cell {
+  padding: 22px 28px;
+  border-right: 1px solid var(--border-lt);
+}
+.fill-cell:last-child { border-right: none; }
+.fill-label {
+  display: block;
+  font-size: 9.5px;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 8px;
+}
+.fill-input {
+  display: block;
+  width: 100%;
+  border: none;
+  background: transparent;
+  font-family: var(--serif);
+  font-size: 19px;
+  font-style: italic;
+  color: var(--text);
+  padding: 2px 0 6px;
+  border-bottom: 1.5px solid var(--border);
+  outline: none;
+  transition: border-color .15s;
+}
+.fill-input::placeholder { color: var(--faint); }
+.fill-input:focus { border-bottom-color: var(--accent); }
+
+/* ============================================================
+   SECTION GRID
+============================================================ */
+.grid-label {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 14px;
+}
+.section-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 14px;
+}
+.sec-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 14px;
+  padding: 22px 20px 20px;
+  background: var(--white);
+  border: 1px solid var(--border);
+  border-radius: var(--r-md);
+  position: relative;
+  overflow: hidden;
+  text-align: left;
+  transition: box-shadow .18s, transform .18s, border-color .18s;
+}
+/* left accent stripe */
+.sec-btn::before {
+  content: '';
+  position: absolute;
+  left: 0; top: 0; bottom: 0;
+  width: 3px;
+  background: var(--border);
+  transition: background .18s;
+}
+.sec-btn:hover {
+  border-color: var(--accent);
+  box-shadow: 0 6px 22px rgba(168,181,160,.22);
+  transform: translateY(-2px);
+}
+.sec-btn:hover::before { background: var(--accent); }
+.sec-icon {
+  width: 38px;
+  height: 38px;
+  border-radius: var(--r-sm);
+  background: var(--surface);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--accent-dk);
+  flex-shrink: 0;
+  transition: background .18s;
+}
+.sec-btn:hover .sec-icon { background: var(--accent-xlt); }
+.sec-name {
+  font-family: var(--serif);
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--header);
+  line-height: 1.25;
+}
+.sec-pg {
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+  color: var(--faint);
+  margin-top: 2px;
+}
+.sec-arrow {
+  margin-left: auto;
+  align-self: flex-end;
+  color: var(--faint);
+  opacity: 0;
+  transition: opacity .18s;
+}
+.sec-btn:hover .sec-arrow { opacity: 1; color: var(--accent); }
+
+/* ============================================================
+   BOTTOM THREE-PANEL ROW
+============================================================ */
+.bottom-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 20px;
+}
+.panel {
+  background: var(--white);
+  border: 1px solid var(--border);
+  border-radius: var(--r-md);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+.panel-head {
+  padding: 15px 22px;
+  border-bottom: 1px solid var(--border-lt);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.panel-title {
+  font-family: var(--serif);
+  font-size: 17px;
+  font-weight: 600;
+  color: var(--header);
+}
+.panel-action {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.10em;
+  text-transform: uppercase;
+  color: var(--accent);
+  background: none;
+  border: none;
+  padding: 4px 0;
+}
+.panel-action:hover { color: var(--accent-dk); }
+.panel-body {
+  padding: 22px;
+  flex: 1;
+}
+
+/* ── Progress trackers ── */
+.progress-list {
+  display: flex;
+  flex-direction: column;
+  gap: 22px;
+}
+.progress-row {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+}
+.ring-wrap {
+  position: relative;
+  flex-shrink: 0;
+  width: 56px;
+  height: 56px;
+}
+.ring-wrap svg { display: block; transform: rotate(-90deg); }
+.ring-center {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--serif);
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--header);
+}
+.ring-bg  { stroke: var(--surface); }
+.ring-val { stroke: var(--accent); stroke-linecap: round; transition: stroke-dasharray .4s ease; }
+.progress-info-name {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text);
+  margin-bottom: 3px;
+}
+.progress-info-hint {
+  font-size: 11px;
+  color: var(--muted);
+  line-height: 1.35;
+}
+
+/* ── Task list ── */
+.task-list {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+.task-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+}
+/* custom checkbox */
+.task-cb-wrap {
+  position: relative;
+  flex-shrink: 0;
+  width: 20px;
+  height: 20px;
+  margin-top: 1px;
+}
+.task-cb {
+  position: absolute;
+  opacity: 0;
+  width: 100%;
+  height: 100%;
+  cursor: pointer;
+  z-index: 2;
+  margin: 0;
+}
+.task-cb-box {
+  width: 20px;
+  height: 20px;
+  border: 1.5px solid var(--border);
+  border-radius: var(--r-xs);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+  transition: all .15s;
+  pointer-events: none;
+}
+.task-cb:checked ~ .task-cb-box {
+  background: var(--accent);
+  border-color: var(--accent);
+}
+.task-cb:checked ~ .task-cb-box svg { opacity: 1; }
+.task-cb-box svg { opacity: 0; transition: opacity .15s; }
+.task-textarea {
+  flex: 1;
+  border: none;
+  background: transparent;
+  font-family: var(--sans);
+  font-size: 13px;
+  color: var(--text);
+  resize: none;
+  outline: none;
+  line-height: 1.45;
+  padding: 0;
+  min-height: 38px;
+}
+.task-textarea::placeholder { color: var(--faint); font-style: italic; }
+.task-divider {
+  height: 1px;
+  background: var(--border-lt);
+  margin: 0 -22px;
+}
+.task-add {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  margin-top: 16px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+  color: var(--accent);
+  background: none;
+  border: none;
+  padding: 6px 0;
+}
+.task-add:hover { color: var(--accent-dk); }
+
+/* ── Mood collage ── */
+.mood-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 8px;
+}
+.mood-cell {
+  aspect-ratio: 1 / 1;
+  border-radius: var(--r-sm);
+  background: var(--surface);
+  border: 1.5px dashed var(--border);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  cursor: pointer;
+  transition: border-color .15s, background .15s;
+}
+.mood-cell:hover { border-color: var(--accent); background: var(--accent-xlt); }
+.mood-cell svg { color: var(--faint); transition: color .15s; }
+.mood-cell:hover svg { color: var(--accent); }
+.mood-cell-label {
+  font-size: 9.5px;
+  font-weight: 700;
+  letter-spacing: 0.10em;
+  text-transform: uppercase;
+  color: var(--faint);
+}
+.mood-cell:hover .mood-cell-label { color: var(--accent); }
+.mood-hint {
+  margin-top: 14px;
+  font-size: 11px;
+  color: var(--muted);
+  text-align: center;
+  line-height: 1.45;
+}
+
+/* ============================================================
+   PAGE FOOTER
+============================================================ */
+.page-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px var(--margin) 22px;
+  border-top: 1px solid var(--border-lt);
+}
+.footer-pg {
+  font-size: 10.5px;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--faint);
+}
+.footer-section {
+  font-size: 10.5px;
+  font-weight: 600;
+  letter-spacing: 0.10em;
+  text-transform: uppercase;
+  color: var(--faint);
+}
+
+/* ============================================================
+   SCALING — fits page to viewport width
+============================================================ */
+</style>
+</head>
+
+<body>
+<div id="scale-wrap">
+<div class="page" id="page">
+
+  <!-- ═══════════════════════════════════════════════════════
+       TOP BAR
+  ════════════════════════════════════════════════════════ -->
+  <header class="top-bar">
+
+    <button class="top-bar-btn">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none"
+           stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+        <polyline points="9 22 9 12 15 12 15 22"/>
+      </svg>
+      Home
+    </button>
+
+    <span class="top-bar-brand">Wedding&nbsp;&nbsp;HQ</span>
+
+    <button class="top-bar-btn right">
+      Section
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none"
+           stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <polyline points="9 18 15 12 9 6"/>
+      </svg>
+    </button>
+
+  </header>
+
+  <!-- ═══════════════════════════════════════════════════════
+       TAB BAR (12 persistent tabs)
+  ════════════════════════════════════════════════════════ -->
+  <nav class="tab-bar">
+    <button class="tab active">Home</button>
+    <button class="tab">TOC</button>
+    <button class="tab">Vision</button>
+    <button class="tab">Organized</button>
+    <button class="tab">Vendors</button>
+    <button class="tab">Budget</button>
+    <button class="tab">Timeline</button>
+    <button class="tab">Guests</button>
+    <button class="tab">Day-Of</button>
+    <button class="tab">Gifts</button>
+    <button class="tab">Honeymoon</button>
+    <button class="tab">Notes</button>
+  </nav>
+
+  <!-- ═══════════════════════════════════════════════════════
+       PAGE BODY
+  ════════════════════════════════════════════════════════ -->
+  <main class="page-body">
+
+    <!-- PAGE HEADER ──────────────────────────────────────── -->
+    <div class="page-header">
+      <div>
+        <div class="page-eyebrow">Home Dashboard</div>
+        <h1 class="page-title">Welcome to Wedding HQ</h1>
+        <p class="page-sub">Your private command center — tap any section to jump straight in</p>
+      </div>
+    </div>
+
+    <!-- COUPLE STRIP ─────────────────────────────────────── -->
+    <div class="couple-strip">
+      <div class="fill-cell">
+        <label class="fill-label">Our Names</label>
+        <input class="fill-input" type="text" placeholder="Partner One  &  Partner Two">
+      </div>
+      <div class="fill-cell">
+        <label class="fill-label">Wedding Date</label>
+        <input class="fill-input" type="text" placeholder="Day · Month · Year">
+      </div>
+      <div class="fill-cell">
+        <label class="fill-label">Venue</label>
+        <input class="fill-input" type="text" placeholder="Name + city…">
+      </div>
+    </div>
+
+    <!-- SECTION GRID ─────────────────────────────────────── -->
+    <div>
+      <p class="grid-label">Jump to any section</p>
+      <div class="section-grid">
+
+        <!-- 1 — Master TOC -->
+        <button class="sec-btn">
+          <div class="sec-icon">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                 stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/>
+              <line x1="8" y1="18" x2="21" y2="18"/>
+              <circle cx="3" cy="6" r="1" fill="currentColor" stroke="none"/>
+              <circle cx="3" cy="12" r="1" fill="currentColor" stroke="none"/>
+              <circle cx="3" cy="18" r="1" fill="currentColor" stroke="none"/>
+            </svg>
+          </div>
+          <div>
+            <div class="sec-name">Master Contents</div>
+            <div class="sec-pg">Pages 5 – 8</div>
+          </div>
+          <div class="sec-arrow">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                 stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="9 18 15 12 9 6"/>
+            </svg>
+          </div>
+        </button>
+
+        <!-- 2 — Our Vision -->
+        <button class="sec-btn">
+          <div class="sec-icon">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                 stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
+            </svg>
+          </div>
+          <div>
+            <div class="sec-name">Our Vision</div>
+            <div class="sec-pg">Part 1 · Pages 11–22</div>
+          </div>
+          <div class="sec-arrow">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                 stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="9 18 15 12 9 6"/>
+            </svg>
+          </div>
+        </button>
+
+        <!-- 3 — Getting Organized -->
+        <button class="sec-btn">
+          <div class="sec-icon">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                 stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M9 11l3 3L22 4"/>
+              <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/>
+            </svg>
+          </div>
+          <div>
+            <div class="sec-name">Getting Organized</div>
+            <div class="sec-pg">Part 2 · Pages 23–40</div>
+          </div>
+          <div class="sec-arrow">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                 stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="9 18 15 12 9 6"/>
+            </svg>
+          </div>
+        </button>
+
+        <!-- 4 — The Vendors -->
+        <button class="sec-btn">
+          <div class="sec-icon">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                 stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+              <circle cx="9" cy="7" r="4"/>
+              <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
+              <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+            </svg>
+          </div>
+          <div>
+            <div class="sec-name">The Vendors</div>
+            <div class="sec-pg">Part 3 · Pages 41–62</div>
+          </div>
+          <div class="sec-arrow">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                 stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="9 18 15 12 9 6"/>
+            </svg>
+          </div>
+        </button>
+
+        <!-- 5 — The Budget -->
+        <button class="sec-btn">
+          <div class="sec-icon">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                 stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="12" y1="1" x2="12" y2="23"/>
+              <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>
+            </svg>
+          </div>
+          <div>
+            <div class="sec-name">The Budget</div>
+            <div class="sec-pg">Part 5 · Pages 63–80</div>
+          </div>
+          <div class="sec-arrow">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                 stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="9 18 15 12 9 6"/>
+            </svg>
+          </div>
+        </button>
+
+        <!-- 6 — Timeline -->
+        <button class="sec-btn">
+          <div class="sec-icon">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                 stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/>
+              <line x1="16" y1="2" x2="16" y2="6"/>
+              <line x1="8" y1="2" x2="8" y2="6"/>
+              <line x1="3" y1="10" x2="21" y2="10"/>
+            </svg>
+          </div>
+          <div>
+            <div class="sec-name">Timeline</div>
+            <div class="sec-pg">Part 6 · Pages 81–98</div>
+          </div>
+          <div class="sec-arrow">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                 stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="9 18 15 12 9 6"/>
+            </svg>
+          </div>
+        </button>
+
+        <!-- 7 — Guests & Seating -->
+        <button class="sec-btn">
+          <div class="sec-icon">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                 stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+              <circle cx="9" cy="7" r="4"/>
+              <line x1="23" y1="11" x2="17" y2="11"/>
+              <line x1="20" y1="8" x2="20" y2="14"/>
+            </svg>
+          </div>
+          <div>
+            <div class="sec-name">Guests &amp; Seating</div>
+            <div class="sec-pg">Part 9 · Pages 99–116</div>
+          </div>
+          <div class="sec-arrow">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                 stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="9 18 15 12 9 6"/>
+            </svg>
+          </div>
+        </button>
+
+        <!-- 8 — Wedding Day -->
+        <button class="sec-btn">
+          <div class="sec-icon">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                 stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="9 11 12 14 22 4"/>
+              <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/>
+            </svg>
+          </div>
+          <div>
+            <div class="sec-name">Wedding Day</div>
+            <div class="sec-pg">Part 7 · Pages 117–131</div>
+          </div>
+          <div class="sec-arrow">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                 stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="9 18 15 12 9 6"/>
+            </svg>
+          </div>
+        </button>
+
+        <!-- 9 — Gifts -->
+        <button class="sec-btn">
+          <div class="sec-icon">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                 stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="20 12 20 22 4 22 4 12"/>
+              <rect x="2" y="7" width="20" height="5"/>
+              <line x1="12" y1="22" x2="12" y2="7"/>
+              <path d="M12 7H7.5a2.5 2.5 0 0 1 0-5C11 2 12 7 12 7z"/>
+              <path d="M12 7h4.5a2.5 2.5 0 0 0 0-5C13 2 12 7 12 7z"/>
+            </svg>
+          </div>
+          <div>
+            <div class="sec-name">Gifts</div>
+            <div class="sec-pg">Part 10 · Pages 132–143</div>
+          </div>
+          <div class="sec-arrow">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                 stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="9 18 15 12 9 6"/>
+            </svg>
+          </div>
+        </button>
+
+        <!-- 10 — Honeymoon -->
+        <button class="sec-btn">
+          <div class="sec-icon">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                 stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M17.8 19.2L16 11l3.5-3.5C21 6 21 4 21 4s-2 0-3.5 1.5L14 9 5.8 7.2c-.5-.1-.9.1-1.1.5l-.3.5c-.2.5-.1 1 .3 1.3L9 12l-2 3H4l-1 1 3 2 2 3 1-1v-3l3-2 3.5 3.3c.3.4.8.5 1.3.3l.5-.2c.4-.3.6-.7.5-1.2z"/>
+            </svg>
+          </div>
+          <div>
+            <div class="sec-name">Honeymoon</div>
+            <div class="sec-pg">Part 11 · Pages 144–155</div>
+          </div>
+          <div class="sec-arrow">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                 stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="9 18 15 12 9 6"/>
+            </svg>
+          </div>
+        </button>
+
+        <!-- 11 — Questions & Tips -->
+        <button class="sec-btn">
+          <div class="sec-icon">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                 stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="10"/>
+              <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/>
+              <line x1="12" y1="17" x2="12.01" y2="17" stroke-width="3"/>
+            </svg>
+          </div>
+          <div>
+            <div class="sec-name">Questions &amp; Tips</div>
+            <div class="sec-pg">Part 8 · Pages 156–160</div>
+          </div>
+          <div class="sec-arrow">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                 stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="9 18 15 12 9 6"/>
+            </svg>
+          </div>
+        </button>
+
+        <!-- 12 — Notes -->
+        <button class="sec-btn">
+          <div class="sec-icon">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                 stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
+              <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
+            </svg>
+          </div>
+          <div>
+            <div class="sec-name">Notes</div>
+            <div class="sec-pg">Pages 156 – 160</div>
+          </div>
+          <div class="sec-arrow">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                 stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="9 18 15 12 9 6"/>
+            </svg>
+          </div>
+        </button>
+
+      </div><!-- /section-grid -->
+    </div>
+
+    <!-- BOTTOM ROW ───────────────────────────────────────── -->
+    <div class="bottom-row">
+
+      <!-- Panel A — Planning Progress ─────────────────── -->
+      <div class="panel">
+        <div class="panel-head">
+          <span class="panel-title">Planning Progress</span>
+        </div>
+        <div class="panel-body">
+          <div class="progress-list">
+
+            <div class="progress-row">
+              <div class="ring-wrap">
+                <svg width="56" height="56" viewBox="0 0 56 56">
+                  <circle class="ring-bg" cx="28" cy="28" r="22" fill="none" stroke-width="5"/>
+                  <circle class="ring-val" cx="28" cy="28" r="22" fill="none" stroke-width="5"
+                          stroke-dasharray="0 138.2"/>
+                </svg>
+                <div class="ring-center">—</div>
+              </div>
+              <div>
+                <div class="progress-info-name">Budget Spent</div>
+                <div class="progress-info-hint">Update in<br>Budget section</div>
+              </div>
+            </div>
+
+            <div class="progress-row">
+              <div class="ring-wrap">
+                <svg width="56" height="56" viewBox="0 0 56 56">
+                  <circle class="ring-bg" cx="28" cy="28" r="22" fill="none" stroke-width="5"/>
+                  <circle class="ring-val" cx="28" cy="28" r="22" fill="none" stroke-width="5"
+                          stroke-dasharray="0 138.2"/>
+                </svg>
+                <div class="ring-center">—</div>
+              </div>
+              <div>
+                <div class="progress-info-name">Tasks Done</div>
+                <div class="progress-info-hint">Track in<br>Organized section</div>
+              </div>
+            </div>
+
+            <div class="progress-row">
+              <div class="ring-wrap">
+                <svg width="56" height="56" viewBox="0 0 56 56">
+                  <circle class="ring-bg" cx="28" cy="28" r="22" fill="none" stroke-width="5"/>
+                  <circle class="ring-val" cx="28" cy="28" r="22" fill="none" stroke-width="5"
+                          stroke-dasharray="0 138.2"/>
+                </svg>
+                <div class="ring-center">—</div>
+              </div>
+              <div>
+                <div class="progress-info-name">Guests Confirmed</div>
+                <div class="progress-info-hint">Update in<br>Guests section</div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+
+      <!-- Panel B — Today's Top 3 ─────────────────────── -->
+      <div class="panel">
+        <div class="panel-head">
+          <span class="panel-title">Today's Top 3</span>
+          <button class="panel-action">Clear all</button>
+        </div>
+        <div class="panel-body">
+          <ul class="task-list">
+
+            <li class="task-row">
+              <label class="task-cb-wrap">
+                <input type="checkbox" class="task-cb">
+                <div class="task-cb-box">
+                  <svg width="11" height="11" viewBox="0 0 12 12" fill="none"
+                       stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <polyline points="2 6 5 9 10 3"/>
+                  </svg>
+                </div>
+              </label>
+              <textarea class="task-textarea" rows="2" placeholder="Write your first priority…"></textarea>
+            </li>
+
+            <div class="task-divider"></div>
+
+            <li class="task-row">
+              <label class="task-cb-wrap">
+                <input type="checkbox" class="task-cb">
+                <div class="task-cb-box">
+                  <svg width="11" height="11" viewBox="0 0 12 12" fill="none"
+                       stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <polyline points="2 6 5 9 10 3"/>
+                  </svg>
+                </div>
+              </label>
+              <textarea class="task-textarea" rows="2" placeholder="Write your second priority…"></textarea>
+            </li>
+
+            <div class="task-divider"></div>
+
+            <li class="task-row">
+              <label class="task-cb-wrap">
+                <input type="checkbox" class="task-cb">
+                <div class="task-cb-box">
+                  <svg width="11" height="11" viewBox="0 0 12 12" fill="none"
+                       stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <polyline points="2 6 5 9 10 3"/>
+                  </svg>
+                </div>
+              </label>
+              <textarea class="task-textarea" rows="2" placeholder="Write your third priority…"></textarea>
+            </li>
+
+          </ul>
+
+          <button class="task-add">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                 stroke-width="2.5" stroke-linecap="round">
+              <line x1="12" y1="5" x2="12" y2="19"/>
+              <line x1="5" y1="12" x2="19" y2="12"/>
+            </svg>
+            Add task
+          </button>
+
+        </div>
+      </div>
+
+      <!-- Panel C — Vision Collage ─────────────────────── -->
+      <div class="panel">
+        <div class="panel-head">
+          <span class="panel-title">Vision Collage</span>
+          <button class="panel-action">Open Vision →</button>
+        </div>
+        <div class="panel-body">
+          <div class="mood-grid">
+            <div class="mood-cell">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                   stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
+              </svg>
+              <span class="mood-cell-label">Photo</span>
+            </div>
+            <div class="mood-cell">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                   stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
+              </svg>
+              <span class="mood-cell-label">Photo</span>
+            </div>
+            <div class="mood-cell">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                   stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
+              </svg>
+              <span class="mood-cell-label">Photo</span>
+            </div>
+            <div class="mood-cell">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                   stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
+              </svg>
+              <span class="mood-cell-label">Photo</span>
+            </div>
+            <div class="mood-cell">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                   stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
+              </svg>
+              <span class="mood-cell-label">Photo</span>
+            </div>
+            <div class="mood-cell">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                   stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
+              </svg>
+              <span class="mood-cell-label">Photo</span>
+            </div>
+          </div>
+          <p class="mood-hint">Paste your inspiration images<br>in GoodNotes or Canva</p>
+        </div>
+      </div>
+
+    </div><!-- /bottom-row -->
+
+  </main>
+
+  <!-- ═══════════════════════════════════════════════════════
+       PAGE FOOTER
+  ════════════════════════════════════════════════════════ -->
+  <footer class="page-footer">
+    <span class="footer-pg">Page 002</span>
+    <span class="footer-section">Home Dashboard &nbsp;·&nbsp; Wedding HQ</span>
+  </footer>
+
+</div><!-- /page -->
+</div><!-- /scale-wrap -->
+
+<script>
+(function () {
+  const page = document.getElementById('page');
+  const wrap = document.getElementById('scale-wrap');
+
+  function scale() {
+    const vw = window.innerWidth - 40;        // account for body padding
+    const ratio = Math.min(vw / 1600, 1);     // never zoom in
+    page.style.transform = `scale(${ratio})`;
+    page.style.transformOrigin = 'top center';
+    // collapse the dead space the scaled-down element leaves behind
+    wrap.style.height = (page.offsetHeight * ratio + 56) + 'px';
+  }
+
+  window.addEventListener('load',   scale);
+  window.addEventListener('resize', scale);
+}());
+</script>
+</body>
+</html>

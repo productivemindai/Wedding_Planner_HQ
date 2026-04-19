@@ -1,0 +1,3219 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>Wedding HQ Studio — Browser Edition</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;0,8..60,700;1,8..60,400&display=swap" rel="stylesheet">
+<style>
+/* ============================================================
+   TOKENS — lifted from Wedding HQ design system
+   ============================================================ */
+:root {
+  /* Editorial (default) — warm ivory & muted champagne gold */
+  --bg:#FAF5EC; --bg-2:#F0E8D6; --panel:#FBF7EF;
+  --border:#E4D9C2; --text:#3D2E24; --heading:#5C4230; --muted:#8A7760;
+  --accent:#C9A875; --accent-dark:#A88A54;
+  --danger:#B8766A; --success:#8EA88A; --warning:#C9A56A;
+
+  --chip-good-bg:#edf4eb; --chip-good-fg:#567350;
+  --chip-warn-bg:#f7f0e4; --chip-warn-fg:#8d6f39;
+  --chip-bad-bg:#fbebea; --chip-bad-fg:#9f5a50;
+
+  --font-serif:'Source Serif 4', Georgia, 'Times New Roman', serif;
+  --font-sans:-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
+
+  --radius-md:14px; --radius-lg:18px; --radius-xl:20px;
+  --radius-2xl:22px; --radius-3xl:30px; --radius-pill:999px;
+  --shadow: 0 10px 30px rgba(58, 47, 42, 0.08);
+  --sidebar-w: 280px; --max-width: 1320px;
+}
+/* Soft Blush */
+html[data-palette="blush"] {
+  --bg:#FAF4F4; --bg-2:#F2E8E8; --panel:#F7EFF0;
+  --border:#E0D0D0; --text:#3F2C2C; --heading:#6B4A4A; --muted:#8B6B6B;
+  --accent:#E8A9B8; --accent-dark:#C88294;
+}
+/* Modern Navy */
+html[data-palette="navy"] {
+  --bg:#F4F7FA; --bg-2:#E8EEF5; --panel:#F4F6F9;
+  --border:#C8D4E0; --text:#2C3A4A; --heading:#1F2E4A; --muted:#5A6A82;
+  --accent:#4A6A9C; --accent-dark:#35517D;
+}
+/* Warm Terracotta */
+html[data-palette="terra"] {
+  --bg:#FAF6F0; --bg-2:#F2EDE4; --panel:#F5EDE4;
+  --border:#E0D4C8; --text:#3F2F24; --heading:#6B4F3A; --muted:#8B7460;
+  --accent:#C68A5E; --accent-dark:#9F6D47;
+}
+/* Dark mode (overrides palette) */
+html.dark {
+  --bg:#1a1714; --bg-2:#231f1b; --panel:#2a2420;
+  --text:#e8e0d8; --heading:#d4c8bc; --border:#3d3530; --muted:#8a7e76;
+  --shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
+  --chip-good-bg:#1d2d1a; --chip-good-fg:#8ea88a;
+  --chip-warn-bg:#2a2415; --chip-warn-fg:#c9a56a;
+  --chip-bad-bg: #2d1a18; --chip-bad-fg:#d4897c;
+}
+
+/* ============================================================
+   BASE
+   ============================================================ */
+* { box-sizing: border-box; }
+html, body { margin:0; padding:0; }
+body {
+  font-family: var(--font-sans);
+  background: var(--bg);
+  color: var(--text);
+  font-size: 15px;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  min-height: 100vh;
+  /* warm dotted grain like marketing pages */
+  background-image: radial-gradient(rgba(92,70,56,.055) 1px, transparent 1px);
+  background-size: 22px 22px;
+}
+html.dark body {
+  background-image: radial-gradient(rgba(255,245,230,.03) 1px, transparent 1px);
+}
+button, input, select, textarea { font: inherit; color: inherit; }
+input, select, textarea { outline: none; }
+input:focus, select:focus, textarea:focus { border-color: var(--accent-dark); }
+a { color: var(--accent-dark); }
+
+h1,h2,h3,h4 { font-family: var(--font-serif); color: var(--heading); margin:0; letter-spacing:.01em; }
+h2 { font-size: clamp(28px, 3.5vw, 42px); line-height:1.05; }
+h3 { font-size: 22px; line-height:1.2; }
+h4 { font-family: var(--font-sans); font-size: 16px; font-weight: 600; }
+p { margin: 0; color: var(--text); line-height: 1.7; }
+.muted { color: var(--muted); }
+.small { font-size: 13px; }
+hr.hair { border:none; border-top:1px solid var(--border); margin: 18px 0; }
+
+.eyebrow {
+  display:inline-block; padding:6px 12px; border-radius:999px;
+  background: var(--bg-2); color: var(--muted);
+  font-size:11px; font-weight:600; letter-spacing:.06em; text-transform:uppercase;
+}
+
+/* ============================================================
+   APP SHELL
+   ============================================================ */
+.app-shell {
+  display: grid;
+  grid-template-columns: var(--sidebar-w) minmax(0,1fr);
+  min-height: 100vh;
+}
+
+/* ----- Sidebar ----- */
+.sidebar {
+  position: sticky; top:0; height:100vh;
+  background: color-mix(in srgb, var(--panel) 90%, transparent);
+  backdrop-filter: blur(8px);
+  border-right: 1px solid var(--border);
+  padding: 22px 18px 18px;
+  overflow: auto;
+  display:flex; flex-direction:column;
+}
+.brand { padding: 4px 6px 8px; }
+.brand-mono { display: flex; align-items: center; gap: 8px; margin-bottom: 10px; }
+.brand-mono-line { flex: 1; height: 1px; background: var(--accent-dark); opacity: .6; }
+.brand-mono-amp {
+  font-family: var(--font-serif); font-style: italic; font-size: 18px;
+  color: var(--accent-dark); line-height: 1;
+}
+.brand h1 {
+  font-family: var(--font-serif); font-size: 30px; line-height:1;
+  color: var(--heading); letter-spacing:.01em; margin:0;
+}
+.brand p { margin-top:6px; font-size:12px; color: var(--muted); line-height:1.45; }
+
+.nav-group { display:grid; gap: 4px; margin-top: 18px; }
+.nav-btn {
+  border:1px solid transparent; border-radius: 14px;
+  padding: 10px 12px; background: transparent; color: var(--text);
+  cursor: pointer; transition: .18s ease;
+  width:100%; text-align:left;
+  display:flex; align-items:center; justify-content:space-between;
+  font-size: 14px;
+}
+.nav-btn:hover {
+  background: var(--bg-2); border-color: var(--border);
+  transform: translateY(-1px);
+}
+.nav-btn.active {
+  background: var(--bg-2); border-color: var(--accent);
+  font-weight: 600; color: var(--heading);
+}
+.nav-btn .nav-count {
+  font-size:11px; color: var(--muted); padding: 2px 7px;
+  background: var(--panel); border:1px solid var(--border);
+  border-radius:999px; font-weight:600;
+}
+.nav-section-label {
+  font-size: 10px; text-transform: uppercase; letter-spacing:.08em;
+  color: var(--muted); padding: 14px 12px 6px; font-weight:600;
+}
+
+.sidebar-footer { margin-top:auto; padding-top:14px; }
+.nav-note {
+  padding: 12px 14px; border-radius: 14px; background: transparent;
+  border: 1px dashed var(--border);
+  font-size: 11.5px; color: var(--muted); line-height:1.5;
+}
+.sidebar-actions { display:flex; gap:6px; margin-top: 10px; }
+.sidebar-actions .mini-btn { flex:1; }
+
+/* Mobile topbar (hidden on desktop) */
+.topbar { display:none; }
+
+/* ----- Main ----- */
+.main {
+  padding: 28px clamp(16px, 3vw, 36px) 80px;
+  max-width: var(--max-width); width:100%;
+}
+.main-inner { display:grid; gap: 20px; }
+
+/* ============================================================
+   PRIMITIVES — cards, panels, stats, buttons, forms, chips
+   ============================================================ */
+.panel, .hero-card, .stat-card {
+  background: var(--panel); border: 1px solid var(--border);
+  border-radius: var(--radius-2xl); box-shadow: var(--shadow);
+}
+
+/* tinted variants for visual rhythm */
+.tint-champagne { background: #FBF3E2 !important; border-color: #E8D5A8 !important; }
+.tint-champagne .stat-label { color: #8A6F2E; }
+.tint-champagne .stat-value { color: #6B4F16; }
+
+.tint-blush { background: #F9EEEA !important; border-color: #E8CFC6 !important; }
+.tint-blush .stat-label { color: #9B6559; }
+.tint-blush .stat-value { color: #7A3F32; }
+
+.tint-sage { background: #EEF2E6 !important; border-color: #C9D4B5 !important; }
+.tint-sage .stat-label { color: #5F7248; }
+.tint-sage .stat-value { color: #3D4F2A; }
+
+.tint-dusk { background: #ECEEF3 !important; border-color: #BCC5D5 !important; }
+.tint-dusk .stat-label { color: #5A6581; }
+.tint-dusk .stat-value { color: #2D3855; }
+
+.tint-terra { background: #F6E8DC !important; border-color: #D9B894 !important; }
+.tint-terra .stat-label { color: #8A5A32; }
+.tint-terra .stat-value { color: #623814; }
+
+.tint-plum { background: #EFE6EE !important; border-color: #C9B4C6 !important; }
+.tint-plum .stat-label { color: #6D4D68; }
+.tint-plum .stat-value { color: #432840; }
+
+html.dark .tint-champagne,
+html.dark .tint-blush,
+html.dark .tint-sage,
+html.dark .tint-dusk,
+html.dark .tint-terra,
+html.dark .tint-plum {
+  /* in dark mode, restore a subtle dark panel so the bright tints don’t dominate */
+  background: var(--panel) !important; border-color: var(--border) !important;
+}
+html.dark .tint-champagne::before,
+html.dark .tint-blush::before,
+html.dark .tint-sage::before,
+html.dark .tint-dusk::before,
+html.dark .tint-terra::before,
+html.dark .tint-plum::before {
+  content: ''; position: absolute; inset: 0; border-radius: inherit; pointer-events: none;
+}
+.stat-card { position: relative; overflow: hidden; }
+.stat-card::after {
+  content: ''; position: absolute; left: 18px; right: 18px; bottom: 14px; height: 2px;
+  background: currentColor; opacity: .12; border-radius: 2px;
+}
+.tint-champagne::after { background: #C9A875; opacity: .35; }
+.tint-blush::after     { background: #C88294; opacity: .35; }
+.tint-sage::after      { background: #7E9077; opacity: .35; }
+.tint-dusk::after      { background: #4A6A9C; opacity: .30; }
+.tint-terra::after     { background: #9F6D47; opacity: .35; }
+.tint-plum::after      { background: #7B4E75; opacity: .30; }
+.panel { padding: 22px; }
+.panel > h3 { margin-bottom: 14px; }
+.panel-head {
+  display:flex; align-items:center; justify-content:space-between;
+  gap: 14px; flex-wrap: wrap; margin-bottom: 16px;
+}
+.panel-head h3 { margin:0; }
+
+.hero-card {
+  padding: 28px; position:relative; overflow:hidden;
+  background:
+    radial-gradient(ellipse at 88% 12%, rgba(201,168,117,.28), transparent 52%),
+    radial-gradient(ellipse at 8% 88%, rgba(232,160,176,.15), transparent 48%),
+    radial-gradient(ellipse at 55% 55%, rgba(201,168,117,.06), transparent 60%),
+    var(--panel);
+}
+.hero-card::after {
+  content: '';
+  position: absolute; inset: 0; pointer-events: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='90' height='90' viewBox='0 0 90 90'%3E%3Cg opacity='.55'%3E%3Cellipse cx='45' cy='28' rx='5' ry='9' fill='none' stroke='%23A88A54' stroke-width='.7' transform='rotate(-20 45 28)'/%3E%3Cellipse cx='45' cy='62' rx='5' ry='9' fill='none' stroke='%23A88A54' stroke-width='.7' transform='rotate(20 45 62)'/%3E%3Cellipse cx='28' cy='45' rx='9' ry='5' fill='none' stroke='%23A88A54' stroke-width='.7' transform='rotate(-20 28 45)'/%3E%3Cellipse cx='62' cy='45' rx='9' ry='5' fill='none' stroke='%23A88A54' stroke-width='.7' transform='rotate(20 62 45)'/%3E%3Ccircle cx='45' cy='45' r='2' fill='%23C9A875' opacity='.6'/%3E%3Ccircle cx='12' cy='12' r='1.2' fill='%23C9A875' opacity='.4'/%3E%3Ccircle cx='78' cy='12' r='1.2' fill='%23C9A875' opacity='.4'/%3E%3Ccircle cx='12' cy='78' r='1.2' fill='%23C9A875' opacity='.4'/%3E%3Ccircle cx='78' cy='78' r='1.2' fill='%23C9A875' opacity='.4'/%3E%3C/g%3E%3C/svg%3E");
+  background-size: 90px 90px;
+  opacity: .065;
+}
+
+.stat-card { padding: 18px; }
+.stat-label {
+  font-size:11px; color: var(--muted); text-transform:uppercase;
+  letter-spacing:.06em; font-weight:600;
+}
+.stat-value {
+  font-family: var(--font-serif); font-size: 32px; font-weight:700;
+  margin-top: 6px; color: var(--heading); line-height: 1.05;
+}
+.stat-sub { font-size: 12px; color: var(--muted); margin-top: 4px; }
+
+/* grids */
+.grid-2, .grid-3, .grid-4, .grid-5 { display:grid; gap:18px; }
+.grid-2 { grid-template-columns: repeat(2, minmax(0,1fr)); }
+.grid-3 { grid-template-columns: repeat(3, minmax(0,1fr)); }
+.grid-4 { grid-template-columns: repeat(4, minmax(0,1fr)); }
+.grid-5 { grid-template-columns: repeat(5, minmax(0,1fr)); }
+.dashboard-grid { display:grid; gap: 18px; grid-template-columns: 1.4fr 1fr; }
+
+/* buttons */
+.btn, .ghost-btn, .action-btn, .mini-btn {
+  border: 1px solid var(--border); border-radius: 14px;
+  padding: 10px 14px; background: transparent; color: var(--text);
+  cursor: pointer; transition: .18s ease;
+  font-weight: 500; display:inline-flex; align-items:center; justify-content:center; gap:8px;
+  font-size: 14px;
+}
+.btn:hover, .ghost-btn:hover {
+  background: var(--bg-2); border-color: var(--accent);
+  transform: translateY(-1px);
+}
+.action-btn {
+  background: var(--accent-dark); border-color: var(--accent-dark);
+  color: #fff; font-weight: 600; border-radius: 14px;
+}
+.action-btn:hover {
+  background: var(--accent); border-color: var(--accent);
+  transform: translateY(-1px);
+}
+.mini-btn { padding: 7px 11px; font-size:12px; border-radius: 12px; }
+.icon-btn {
+  width:32px; height:32px; padding:0; border-radius:999px;
+  border:1px solid var(--border); background: transparent; cursor:pointer;
+  color: var(--muted);
+  display:inline-flex; align-items:center; justify-content:center;
+}
+.icon-btn:hover { color: var(--danger); border-color: var(--danger); }
+
+/* form */
+.form-grid {
+  display:grid; grid-template-columns: repeat(12, minmax(0,1fr)); gap: 14px;
+}
+.field { display:grid; gap:6px; }
+.field label {
+  font-size:11px; font-weight:600; color: var(--muted);
+  text-transform: uppercase; letter-spacing:.06em;
+}
+.field input, .field select, .field textarea {
+  width:100%; border:1px solid var(--border); background: var(--bg);
+  padding: 11px 13px; border-radius: 14px; color: var(--text);
+  min-height: 44px; transition: border-color .15s ease;
+}
+html.dark .field input, html.dark .field select, html.dark .field textarea {
+  background: var(--panel);
+}
+.field textarea { min-height: 100px; resize: vertical; line-height: 1.6; }
+.span-12{grid-column:span 12}.span-9{grid-column:span 9}
+.span-8{grid-column:span 8}.span-6{grid-column:span 6}
+.span-4{grid-column:span 4}.span-3{grid-column:span 3}
+
+/* table */
+.table-wrap { overflow-x:auto; border-radius: 14px; }
+table { width:100%; border-collapse: collapse; min-width: 620px; }
+th, td { text-align:left; padding: 14px 12px; border-bottom:1px solid var(--border); font-size: 14px; vertical-align: middle; }
+th {
+  color: var(--muted); font-size: 11px; text-transform:uppercase;
+  letter-spacing:.06em; background: transparent; font-weight:600;
+}
+tbody tr { transition: background .15s ease; }
+tbody tr:hover { background: var(--bg-2); }
+tbody tr:last-child td { border-bottom: none; }
+td.num { text-align:right; font-variant-numeric: tabular-nums; }
+td.name { font-weight: 600; color: var(--heading); }
+
+/* status chips */
+.status {
+  display:inline-block; padding:4px 10px; border-radius:999px;
+  font-size:11px; font-weight:600; letter-spacing:.02em;
+  text-transform: capitalize;
+}
+.status.confirmed, .status.paid, .status.attending, .status.booked, .status.done { background: var(--chip-good-bg); color: var(--chip-good-fg); }
+.status.pending, .status.partial, .status.contacted, .status.planning, .status.progress { background: var(--chip-warn-bg); color: var(--chip-warn-fg); }
+.status.declined, .status.over, .status.cancelled, .status.todo { background: var(--chip-bad-bg); color: var(--chip-bad-fg); }
+
+.chip {
+  display:inline-flex; align-items:center; gap:6px;
+  padding:6px 10px; border-radius:999px; background: var(--bg-2);
+  font-size:12px; color: var(--text);
+  border: 1px solid transparent;
+}
+.chip.removable { padding-right: 4px; }
+.chip .x {
+  width:16px; height:16px; border-radius:999px; background: transparent;
+  color: var(--muted); cursor:pointer; display:inline-flex;
+  align-items:center; justify-content:center; font-size:12px; border:none;
+}
+.chip .x:hover { color: var(--danger); }
+
+/* section titles (with ornamental divider) */
+.section-title { margin-bottom: 6px; display:grid; gap: 6px; }
+.section-floral-divider { display:flex; align-items:center; gap:14px; margin-bottom:10px; }
+.section-floral-divider .sfd-line { flex:1; height:1px;
+  background: linear-gradient(to right, transparent, var(--accent-dark) 20%, var(--accent-dark) 80%, transparent);
+  opacity: .7;
+}
+.section-floral-divider .sfd-glyph {
+  font-family: var(--font-serif); color: var(--accent-dark); font-size: 13px;
+  letter-spacing: .3em; line-height: 1; display:inline-flex; align-items:center; gap: 6px;
+}
+.section-title h2 { margin: 6px 0 4px; }
+.section-title p.lead { color: var(--muted); font-size: 15px; line-height:1.6; max-width: 62ch; }
+
+/* progress bar */
+.progress {
+  width:100%; height:8px; background: var(--bg-2); border-radius:999px;
+  overflow:hidden; margin-top: 8px;
+}
+.progress > span { display:block; height:100%; background: var(--accent-dark); border-radius:999px; transition: width .35s ease; }
+.progress.over > span { background: var(--danger); }
+
+/* checkbox row */
+.task-row {
+  display:flex; align-items:flex-start; gap: 12px;
+  padding: 12px; border-radius: 14px; border: 1px solid var(--border);
+  background: var(--bg);
+  transition: background .15s ease;
+}
+html.dark .task-row { background: var(--panel); }
+.task-row + .task-row { margin-top: 10px; }
+.task-row:hover { background: var(--bg-2); }
+.task-row.done .task-title { text-decoration: line-through; color: var(--muted); }
+.task-check {
+  appearance:none; width:20px; height:20px; border-radius: 6px;
+  border: 1.5px solid var(--border); cursor: pointer; margin-top: 2px;
+  background: var(--bg); transition: .15s ease; flex-shrink:0;
+  position: relative;
+}
+.task-check:hover { border-color: var(--accent-dark); }
+.task-check:checked {
+  background: var(--accent-dark); border-color: var(--accent-dark);
+}
+.task-check:checked::after {
+  content: ''; position:absolute; left: 5px; top: 1px; width: 5px; height: 10px;
+  border: solid #fff; border-width: 0 2px 2px 0; transform: rotate(45deg);
+}
+.task-body { flex: 1; min-width:0; }
+.task-title { font-weight: 600; color: var(--heading); line-height:1.3; }
+.task-meta { font-size: 12px; color: var(--muted); margin-top: 4px; display:flex; gap:10px; flex-wrap:wrap; }
+
+/* countdown / hero */
+.couple-display {
+  display: flex; align-items: baseline; gap: 14px; flex-wrap: wrap;
+  margin-bottom: 14px; font-family: var(--font-serif);
+  color: var(--heading); line-height: 1.1;
+}
+.couple-display .couple-name {
+  font-size: clamp(26px, 3.2vw, 38px); letter-spacing: .01em; font-weight: 500;
+}
+.couple-display .couple-amp {
+  font-family: var(--font-serif); font-style: italic;
+  font-size: clamp(32px, 4vw, 48px); color: var(--accent-dark);
+  font-weight: 400; line-height: 1;
+}
+.countdown {
+  display:flex; align-items:baseline; gap: 8px;
+  margin: 14px 0 6px;
+}
+.countdown .days {
+  font-family: var(--font-serif); font-size: 72px; font-weight: 700;
+  color: var(--heading); line-height: 1; letter-spacing: -0.01em;
+}
+.countdown .label {
+  font-size: 12px; letter-spacing:.08em; color: var(--muted);
+  text-transform: uppercase; font-weight: 600;
+}
+
+/* inspiration grid */
+.inspo-grid {
+  display:grid; gap: 12px;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+}
+.inspo-tile {
+  aspect-ratio: 1; border-radius: 18px; border:1px solid var(--border);
+  overflow: hidden; position: relative; background: var(--bg-2);
+  cursor: pointer; transition: .2s ease;
+}
+.inspo-tile:hover { transform: translateY(-2px); border-color: var(--accent); }
+.inspo-tile img { width:100%; height:100%; object-fit:cover; display:block; }
+.inspo-tile .inspo-caption {
+  position:absolute; left:8px; right:8px; bottom:8px;
+  padding: 6px 10px; background: rgba(58,47,42,.75); color:#fff;
+  border-radius: 10px; font-size: 12px; backdrop-filter: blur(6px);
+}
+.inspo-tile .inspo-del {
+  position:absolute; top:8px; right:8px; width:26px; height:26px;
+  border-radius:999px; background: rgba(58,47,42,.7); color:#fff;
+  border:none; cursor:pointer; font-size:14px; line-height:1; padding:0;
+  display:none;
+}
+.inspo-tile:hover .inspo-del { display:inline-flex; align-items:center; justify-content:center; }
+.inspo-tile.add {
+  display:flex; align-items:center; justify-content:center;
+  color: var(--muted); font-size: 13px;
+  border-style: dashed; background: transparent; text-align:center; padding: 12px;
+  border-width: 1.5px;
+}
+.inspo-tile.add .add-ornament {
+  font-family: var(--font-serif); color: var(--accent-dark); font-size: 28px; line-height: 1;
+  margin-bottom: 8px; font-weight: 300;
+}
+.inspo-tile.add .add-label {
+  font-family: var(--font-serif); color: var(--heading); font-size: 14px; letter-spacing: .05em;
+}
+.inspo-tile.add .add-sub {
+  font-size: 11px; color: var(--muted); margin-top: 6px; letter-spacing: .02em;
+}
+.inspo-tile.add:hover { color: var(--accent-dark); border-color: var(--accent-dark); }
+
+/* Seed/sample tiles for empty board */
+.inspo-tile.seed { cursor: default; border-style: dashed; }
+.inspo-tile.seed:hover { transform: none; border-color: var(--border); }
+.inspo-tile.seed .seed-inner {
+  width: 100%; height: 100%; display: flex; flex-direction: column;
+  align-items: center; justify-content: flex-end;
+  padding: 14px 10px;
+}
+.inspo-tile.seed .seed-icon { font-size: 2rem; margin-bottom: 6px; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -70%); opacity: .6; }
+.inspo-tile.seed .seed-label {
+  font-size: 11px; font-weight: 600; letter-spacing: .05em; text-transform: uppercase;
+  color: rgba(60,45,35,.7); background: rgba(255,255,255,.5);
+  padding: 4px 8px; border-radius: 20px; backdrop-filter: blur(4px);
+  position: absolute; bottom: 10px; left: 50%; transform: translateX(-50%); white-space: nowrap;
+}
+.inspo-seed-hint { text-align: center; color: var(--muted); font-size: .875rem; font-style: italic; margin-top: 10px; }
+
+/* note area */
+.note-area {
+  width:100%; min-height: 160px; border:1px solid var(--border); border-radius: 18px;
+  padding: 16px; background: var(--bg); line-height:1.7; resize: vertical;
+  font-family: var(--font-sans);
+}
+html.dark .note-area { background: var(--panel); }
+
+/* Floating settings button */
+.fab-group {
+  position: fixed; right: 18px; bottom: 18px; z-index: 30;
+  display:flex; gap:8px;
+}
+.fab {
+  border:1px solid var(--border); background: var(--panel);
+  border-radius: 999px; padding: 10px 14px; cursor:pointer;
+  box-shadow: var(--shadow); font-size: 13px; font-weight: 500;
+  color: var(--text);
+}
+.fab:hover { border-color: var(--accent); }
+
+/* Settings modal */
+.modal-bg {
+  position: fixed; inset: 0; background: rgba(26,20,17,.45);
+  display:none; align-items:center; justify-content:center;
+  z-index: 100; padding: 16px;
+  backdrop-filter: blur(4px);
+}
+.modal-bg.open { display:flex; animation: fade .25s ease; }
+.modal {
+  background: var(--panel); border:1px solid var(--border);
+  border-radius: var(--radius-3xl); padding: 28px;
+  max-width: 560px; width:100%; box-shadow: var(--shadow);
+  max-height: 90vh; overflow:auto;
+  animation: rise .25s ease;
+}
+.modal h3 { margin: 0 0 6px; font-size: 26px; }
+.modal .modal-sub { color: var(--muted); font-size: 14px; margin-bottom: 18px; }
+.modal-row { display:grid; gap: 6px; margin-bottom: 18px; }
+.modal-row > label {
+  font-size:11px; font-weight:600; color: var(--muted);
+  text-transform:uppercase; letter-spacing:.06em;
+}
+.palette-grid { display:grid; grid-template-columns: repeat(4, 1fr); gap: 10px; }
+.palette-swatch {
+  border: 1.5px solid var(--border); border-radius: 14px; padding: 10px;
+  cursor:pointer; text-align:center; transition:.15s ease;
+  background: var(--bg);
+}
+.palette-swatch.active { border-color: var(--accent-dark); box-shadow: inset 0 0 0 1px rgba(126,144,119,.2); }
+.palette-swatch .dots { display:flex; gap:4px; justify-content:center; margin-bottom:8px; }
+.palette-swatch .dots i { width:14px; height:14px; border-radius: 999px; display:inline-block; border:1px solid rgba(0,0,0,.06); }
+.palette-swatch .palette-name { font-size: 11px; color: var(--muted); font-weight:600; text-transform: uppercase; letter-spacing:.05em; }
+
+.modal-close {
+  position: absolute; top: 14px; right: 14px;
+  width: 32px; height: 32px; border-radius: 999px;
+  border:1px solid var(--border); background: var(--bg);
+  cursor:pointer; color: var(--muted);
+  display:inline-flex; align-items:center; justify-content:center;
+}
+
+/* Welcome overlay (first run) */
+.welcome-bg {
+  position: fixed; inset: 0; z-index: 200;
+  background:
+    radial-gradient(circle at 30% 20%, rgba(168,181,160,.18), transparent 55%),
+    radial-gradient(circle at 80% 90%, rgba(232,160,176,.15), transparent 55%),
+    var(--bg);
+  display: none; align-items:center; justify-content:center;
+  padding: 20px;
+}
+.welcome-bg.open { display:flex; }
+.welcome-main {
+  background: var(--panel); border:1px solid var(--border);
+  border-radius: var(--radius-3xl); padding: 40px 44px;
+  max-width: 640px; width:100%; position:relative; box-shadow: var(--shadow);
+  overflow: hidden;
+  background:
+    radial-gradient(ellipse at 95% 5%, rgba(201,168,117,.18), transparent 45%),
+    radial-gradient(ellipse at 5% 95%, rgba(232,160,176,.13), transparent 40%),
+    var(--panel);
+}
+.welcome-main::before {
+  content:''; position:absolute; top:28px; right:36px; width: 120px; height: 1px;
+  background: linear-gradient(to right, transparent, var(--accent-dark) 40%, transparent);
+  opacity: .55; pointer-events: none;
+}
+.welcome-main::after {
+  content:'\25C6'; position:absolute; top:22px; right:94px;
+  color: var(--accent-dark); font-size: 10px; opacity: .65; pointer-events: none;
+}
+.welcome-floral {
+  position: absolute; pointer-events: none; opacity: .18;
+}
+.welcome-floral-tr { top: -8px; right: -8px; width: 130px; height: 130px; }
+.welcome-floral-bl { bottom: -8px; left: -8px; width: 110px; height: 110px; transform: rotate(180deg); }
+.welcome-main h1 {
+  font-family: var(--font-serif); font-size: clamp(36px, 5vw, 56px);
+  line-height: 1; letter-spacing:.01em; color: var(--heading);
+  margin: 12px 0 10px;
+}
+.welcome-main p.lead { color: var(--muted); font-size: 16px; line-height: 1.7; margin-bottom: 18px; max-width: 46ch; }
+
+/* Empty state */
+.empty {
+  text-align:center; padding: 36px 20px;
+  color: var(--muted); border: 1px dashed var(--border); border-radius: 18px;
+  background: transparent;
+}
+.empty .empty-title { font-family: var(--font-serif); color: var(--heading); font-size: 20px; margin-bottom: 6px; }
+
+/* Toast */
+.toast {
+  position: fixed; left: 50%; bottom: 28px;
+  transform: translateX(-50%) translateY(20px);
+  background: var(--heading); color: var(--bg);
+  padding: 10px 18px; border-radius: 999px;
+  font-size: 13px; font-weight: 500;
+  opacity: 0; pointer-events: none;
+  transition: .25s ease; z-index: 500;
+  box-shadow: 0 6px 20px rgba(0,0,0,.2);
+}
+.toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+/* Tier / pricing */
+.nav-btn.locked { opacity: .6; }
+.nav-btn.locked:hover { opacity: 1; }
+.nav-lock {
+  font-size: 10px; font-weight: 600; letter-spacing: .05em; text-transform: uppercase;
+  background: var(--bg-2); border:1px solid var(--border); padding: 2px 8px;
+  border-radius: 999px; color: var(--muted);
+}
+.nav-btn.pricing-btn {
+  border-color: var(--accent);
+  background: linear-gradient(135deg, color-mix(in srgb, var(--accent) 15%, var(--panel)), var(--panel));
+}
+.palette-swatch.locked { opacity: .55; cursor: pointer; position: relative; }
+.palette-swatch.locked:hover { opacity: .85; }
+.palette-lock {
+  display:block; font-size: 9px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase;
+  color: var(--accent-dark); margin-top: 4px;
+}
+
+/* Tier card grid */
+.tier-grid { display:grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 18px; }
+@media (max-width: 900px) { .tier-grid { grid-template-columns: 1fr; } }
+.tier-card {
+  background: var(--panel); border: 1px solid var(--border); border-radius: var(--radius-2xl);
+  padding: 28px 26px; box-shadow: var(--shadow);
+  display:flex; flex-direction:column; gap: 14px; position: relative;
+  transition: .2s ease;
+}
+.tier-card.current { border-color: var(--accent-dark); box-shadow: 0 12px 40px rgba(58,47,42,0.12), inset 0 0 0 1px var(--accent-dark); }
+.tier-card.featured {
+  background: linear-gradient(160deg, color-mix(in srgb, var(--accent) 12%, var(--panel)), var(--panel) 60%);
+}
+.tier-badge {
+  position: absolute; top: 14px; right: 14px;
+  font-size: 10px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase;
+  padding: 4px 10px; border-radius: 999px;
+  background: var(--accent-dark); color: #fff;
+}
+.tier-card.current .tier-badge { background: var(--heading); }
+.tier-name { font-family: var(--font-serif); font-size: 26px; color: var(--heading); line-height:1; }
+.tier-price { font-family: var(--font-serif); font-size: 46px; font-weight: 700; color: var(--heading); line-height: 1; letter-spacing: -0.01em; }
+.tier-price .once { font-family: var(--font-sans); font-size: 12px; color: var(--muted); font-weight: 500; margin-left: 6px; letter-spacing: .04em; text-transform: uppercase; }
+.tier-includes { list-style: none; padding: 0; margin: 4px 0 14px; display:grid; gap: 8px; }
+.tier-includes li { display:flex; gap: 10px; align-items: flex-start; font-size: 13.5px; color: var(--text); line-height: 1.5; }
+.tier-includes li::before {
+  content: ''; width: 6px; height: 6px; border-radius: 999px;
+  background: var(--accent-dark); margin-top: 8px; flex-shrink: 0;
+}
+.tier-includes li.off { color: var(--muted); opacity: .55; }
+.tier-includes li.off::before { background: var(--border); }
+
+/* Segmented control */
+.seg {
+  display:inline-flex; background: var(--bg-2); padding: 4px;
+  border-radius: 999px; border: 1px solid var(--border);
+}
+.seg button {
+  border: none; background: transparent; padding: 6px 12px;
+  border-radius: 999px; font-size: 12px; color: var(--muted);
+  cursor: pointer; font-weight: 600; letter-spacing: .02em;
+}
+.seg button.on { background: var(--panel); color: var(--heading); box-shadow: 0 1px 2px rgba(0,0,0,.04); }
+
+/* entry animation */
+@keyframes fade { from { opacity: 0; transform: translateY(8px);} to { opacity: 1; transform: translateY(0);} }
+@keyframes rise { from { opacity: 0; transform: translateY(16px);} to { opacity: 1; transform: translateY(0);} }
+.route { animation: fade .25s ease; }
+
+/* ---------- RESPONSIVE ---------- */
+@media (max-width: 1100px) {
+  .app-shell { grid-template-columns: 1fr; }
+  .sidebar { display: none; }
+  .topbar {
+    display: flex; align-items:center; justify-content:space-between;
+    padding: 14px 16px;
+    background: color-mix(in srgb, var(--panel) 92%, transparent);
+    border-bottom: 1px solid var(--border);
+    position: sticky; top: 0; z-index: 20; backdrop-filter: blur(8px);
+  }
+  .topbar .brand-mini {
+    font-family: var(--font-serif); font-size: 22px; color: var(--heading);
+  }
+  .topbar select.nav-select {
+    border:1px solid var(--border); background: var(--bg); color: var(--text);
+    padding: 8px 12px; border-radius: 999px; font-size: 13px; font-weight: 600;
+    min-width: 150px;
+  }
+  .dashboard-grid, .grid-2, .grid-3, .grid-4, .grid-5 { grid-template-columns: 1fr; }
+  .hero-grid { grid-template-columns: 1fr !important; }
+  .main { padding: 20px 16px 80px; }
+  .hf-right { display:none !important; }
+}
+@media (min-width: 1101px) {
+  .topbar { display:none !important; }
+}
+@media (max-width: 620px) {
+  .countdown .days { font-size: 56px; }
+  .panel { padding: 18px; }
+  .hero-card { padding: 20px; }
+  .stat-value { font-size: 26px; }
+}
+
+/* ---------- PRINT ---------- */
+@media print {
+  @page { margin: 18mm 14mm; }
+  html, body { background: #fff !important; color: #111 !important; }
+  body { background-image: none !important; }
+  .sidebar, .topbar, .fab-group, .modal-bg, .welcome-bg, .btn-row, .action-btn, .ghost-btn, .mini-btn, .icon-btn, .inspo-del, .seg {
+    display: none !important;
+  }
+  .app-shell { grid-template-columns: 1fr !important; }
+  .main { padding: 0 !important; max-width: none !important; }
+  .panel, .hero-card, .stat-card {
+    box-shadow: none !important; border: 1px solid #d0cabf !important;
+    break-inside: avoid; background: #fff !important;
+  }
+  .route { display: block !important; }
+  .route + .route { page-break-before: always; }
+  h2, h3 { color: #3a2f2a !important; }
+  .table-wrap { overflow: visible; }
+  table { min-width: auto; }
+  .inspo-tile .inspo-del { display: none !important; }
+  .hf-right { opacity: .35 !important; }
+}
+</style>
+</head>
+<body>
+
+<!-- ============================================================
+     APP SHELL (sidebar + main)
+     ============================================================ -->
+<div class="app-shell">
+
+  <!-- Sidebar (desktop) -->
+  <aside class="sidebar" id="sidebar">
+    <div class="brand">
+      <div class="brand-mono">
+        <span class="brand-mono-line"></span>
+        <span class="brand-mono-amp">&amp;</span>
+        <span class="brand-mono-line"></span>
+      </div>
+      <h1>WEDDING HQ</h1>
+      <p>A local-first wedding planning studio.</p>
+    </div>
+    <nav class="nav-group" id="nav"></nav>
+    <div class="sidebar-footer">
+      <div class="nav-note">Auto-saved on your device. Export a backup from Settings anytime — your data never leaves this browser.</div>
+      <div class="sidebar-actions">
+        <button class="mini-btn" id="btn-settings-side">Settings</button>
+        <button class="mini-btn" id="btn-print-side">Print</button>
+      </div>
+    </div>
+  </aside>
+
+  <!-- Mobile topbar -->
+  <header class="topbar">
+    <div class="brand-mini">Wedding HQ</div>
+    <select class="nav-select" id="nav-select" aria-label="Navigate"></select>
+  </header>
+
+  <main class="main">
+    <div class="main-inner" id="route-mount"></div>
+  </main>
+</div>
+
+<!-- Floating settings FAB -->
+<div class="fab-group">
+  <button class="fab" id="fab-settings" title="Settings">Settings</button>
+</div>
+
+<!-- Settings modal -->
+<div class="modal-bg" id="settings-modal">
+  <div class="modal" style="position:relative">
+    <button class="modal-close" id="modal-close">×</button>
+    <h3>Settings</h3>
+    <p class="modal-sub">Adjust the look, back up your data, or start over.</p>
+
+    <div class="modal-row">
+      <label>Tier</label>
+      <div class="seg" id="tier-seg">
+        <button data-val="lite">Lite</button>
+        <button data-val="standard">Standard</button>
+        <button data-val="premium">Premium</button>
+      </div>
+      <p class="muted small" style="margin-top:6px">See full comparison on the Upgrade page.</p>
+    </div>
+
+    <div class="modal-row">
+      <label>Color Palette</label>
+      <div class="palette-grid" id="palette-grid"></div>
+    </div>
+
+    <div class="modal-row">
+      <label>Appearance</label>
+      <div class="seg" id="dark-seg">
+        <button data-val="light" class="on">Light</button>
+        <button data-val="dark">Dark</button>
+      </div>
+    </div>
+
+    <div class="modal-row">
+      <label>Your data</label>
+      <div style="display:flex; gap:8px; flex-wrap:wrap;">
+        <button class="ghost-btn" id="btn-export">Export backup (.json)</button>
+        <button class="ghost-btn" id="btn-import">Import backup</button>
+        <button class="ghost-btn" id="btn-print">Print view</button>
+      </div>
+      <input type="file" id="import-file" accept="application/json" style="display:none"/>
+    </div>
+
+    <div class="modal-row">
+      <label style="color: var(--danger)">Danger zone</label>
+      <button class="ghost-btn" id="btn-reset" style="color: var(--danger); border-color: var(--danger);">Reset planner (delete all data)</button>
+    </div>
+  </div>
+</div>
+
+<!-- Welcome overlay (first run) -->
+<div class="welcome-bg" id="welcome">
+  <div class="welcome-main">
+    <!-- floral corner decorations -->
+    <svg class="welcome-floral welcome-floral-tr" viewBox="0 0 130 130" xmlns="http://www.w3.org/2000/svg" fill="none">
+      <path d="M130,0 Q80,10 70,50 Q60,85 100,110 Q115,70 130,0Z" fill="#C9A875"/>
+      <path d="M130,0 Q100,30 95,65 Q90,95 115,120 Q125,85 130,0Z" fill="#A88A54" opacity=".5"/>
+      <ellipse cx="82" cy="48" rx="8" ry="14" fill="none" stroke="#C9A875" stroke-width="1.5" transform="rotate(-35 82 48)"/>
+      <ellipse cx="100" cy="72" rx="8" ry="14" fill="none" stroke="#C9A875" stroke-width="1.5" transform="rotate(-55 100 72)"/>
+      <circle cx="75" cy="42" r="2.5" fill="#C9A875"/>
+      <circle cx="95" cy="68" r="2" fill="#C9A875"/>
+    </svg>
+    <svg class="welcome-floral welcome-floral-bl" viewBox="0 0 110 110" xmlns="http://www.w3.org/2000/svg" fill="none">
+      <path d="M110,0 Q60,10 50,50 Q40,85 80,110 Q95,70 110,0Z" fill="#C9A875"/>
+      <ellipse cx="62" cy="48" rx="7" ry="12" fill="none" stroke="#C9A875" stroke-width="1.5" transform="rotate(-35 62 48)"/>
+      <circle cx="58" cy="42" r="2" fill="#C9A875"/>
+    </svg>
+    <span class="eyebrow">Browser Planner · First Run</span>
+    <h1>Plan confidently.<br/>Stay organized.</h1>
+    <p class="lead">Wedding HQ turns your ideas, vendors, guest lists, budget, and day-of schedule into one elegant browser workspace. Everything stays on your device.</p>
+    <div class="form-grid" style="margin: 10px 0 6px">
+      <div class="field span-6"><label>Couple Names</label><input id="w-names" placeholder="Alex &amp; Jordan"/></div>
+      <div class="field span-6"><label>Wedding Date</label><input id="w-date" type="date"/></div>
+      <div class="field span-12"><label>Wedding Location</label><input id="w-loc" placeholder="Laurel Hill Estate, Sonoma"/></div>
+    </div>
+    <div style="display:flex; gap:10px; align-items:center; margin-top: 18px;">
+      <button class="action-btn" id="w-start">Create planner</button>
+      <button class="ghost-btn" id="w-later">Maybe later</button>
+    </div>
+  </div>
+</div>
+
+<!-- Toast -->
+<div class="toast" id="toast"></div>
+
+<!-- Inline SVG templates (ornamental divider reused by each section) -->
+<template id="tpl-floral-divider">
+  <div class="section-floral-divider">
+    <div class="sfd-line"></div>
+    <span class="sfd-glyph">&#9830;</span>
+    <div class="sfd-line"></div>
+  </div>
+</template>
+
+<script>
+/* ============================================================
+   STATE + STORAGE
+   ============================================================ */
+const STORAGE_KEY = 'weddingHQ.v1';
+
+/* ============================================================
+   PRODUCT TIER LOCK
+   null  = preview / dev mode (in-app tier switcher enabled)
+   'lite' | 'standard' | 'premium' = distribution mode
+   Each distribution file sets this to its purchased tier.
+   ============================================================ */
+const PRODUCT_TIER = null; /* SET AT BUILD TIME */
+
+const ETSY_URLS = {
+  lite:     'https://productivemindai.etsy.com/listing/wedding-hq-lite',
+  standard: 'https://productivemindai.etsy.com/listing/wedding-hq-standard',
+  premium:  'https://productivemindai.etsy.com/listing/wedding-hq-premium',
+};
+
+const DEFAULT_STATE = {
+  couple: { names: '', date: '', location: '' },
+  vision: {
+    keywords: '',
+    colors: '',
+    priorities: '',
+    why: '',
+    notes: '',
+    moodTags: []
+  },
+  tasks: [], // {id,title,due,owner,done,category}
+  vendors: [], // {id,name,category,contact,phone,email,quoted, status,paid, notes}
+  budget: {
+    total: 0,
+    items: [] // {id,category,planned,actual,status,notes}
+  },
+  timeline: [], // {id,when,activity,owner,type, sort}
+  guests: [], // {id,name,party,rsvp,plusOne,dietary,table,address}
+  dayof: [], // {id,time,activity,who,notes}
+  gifts: [], // {id,from,item,thanked,notes}
+  honeymoon: {
+    destination: '', dates: '', budget: '', notes: '',
+    checklist: [] // {id,title,done}
+  },
+  invitations: {
+    template: 'classic', // 'classic' | 'modern' | 'elegant'
+    couple: '', date: '', time: '', location: '',
+    url: '', rvspByDate: '', details: ''
+  },
+  inspo: [], // {id,src,caption}
+  photos: [], // {id, src, caption, album, date}
+  journal: {
+    entries: [] // {id, date, title, body, mood}
+  },
+  notes: '',
+  ui: {
+    route: 'dashboard',
+    palette: 'editorial',
+    dark: false,
+    firstRun: true,
+    tier: 'lite' /* 'lite' | 'standard' | 'premium' */
+  }
+};
+
+/* ============================================================
+   TIERS — what's included at each level
+   ============================================================ */
+const TIERS = {
+  lite: {
+    id: 'lite', name: 'Lite', price: 9, inAppPrice: 19,
+    tagline: 'Everything essential to plan confidently.',
+    sections: ['dashboard','vision','tasks','vendors','budget','timeline','guests','inspo','notes'],
+    palettes: ['editorial'],
+  },
+  standard: {
+    id: 'standard', name: 'Standard', price: 19, inAppPrice: 39,
+    tagline: 'Lite, plus the wedding-day and after.',
+    sections: ['dashboard','vision','tasks','vendors','budget','timeline','guests','dayof','gifts','honeymoon','inspo','photos','notes'],
+    palettes: ['editorial'],
+  },
+  premium: {
+    id: 'premium', name: 'Premium', price: 29, inAppPrice: 59,
+    tagline: 'Every section. Every palette. The full studio.',
+    sections: ['dashboard','vision','tasks','vendors','budget','timeline','guests','dayof','gifts','honeymoon','invitations','inspo','photos','journal','notes'],
+    palettes: ['editorial','blush','navy','terra'],
+  },
+};
+function currentTier() { return TIERS[State.ui.tier] || TIERS.lite; }
+function hasSection(id) { return currentTier().sections.includes(id); }
+function hasPalette(id) { return currentTier().palettes.includes(id); }
+
+function deepMerge(target, source) {
+  // merge source into target preserving target keys that source lacks
+  const out = Array.isArray(target) ? [...target] : { ...target };
+  if (Array.isArray(source)) return source.slice();
+  if (typeof source !== 'object' || source === null) return source;
+  for (const k of Object.keys(source)) {
+    if (k in target && typeof target[k] === 'object' && target[k] !== null && !Array.isArray(target[k])) {
+      out[k] = deepMerge(target[k], source[k]);
+    } else {
+      out[k] = source[k];
+    }
+  }
+  return out;
+}
+
+function loadState() {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    const base = raw
+      ? deepMerge(structuredClone(DEFAULT_STATE), JSON.parse(raw))
+      : structuredClone(DEFAULT_STATE);
+    if (PRODUCT_TIER) base.ui.tier = PRODUCT_TIER;
+    return base;
+  } catch (e) {
+    console.warn('Load failed, using defaults', e);
+    const d = structuredClone(DEFAULT_STATE);
+    if (PRODUCT_TIER) d.ui.tier = PRODUCT_TIER;
+    return d;
+  }
+}
+
+const State = loadState();
+
+let saveTimer = null;
+function saveState() {
+  clearTimeout(saveTimer);
+  saveTimer = setTimeout(() => {
+    try {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(State));
+    } catch (e) {
+      toast('Could not save — storage may be full.');
+    }
+  }, 120);
+}
+
+function uid() { return 'id-' + Math.random().toString(36).slice(2, 10); }
+
+/* toast */
+function toast(msg) {
+  const el = document.getElementById('toast');
+  el.textContent = msg;
+  el.classList.add('show');
+  clearTimeout(toast._t);
+  toast._t = setTimeout(() => el.classList.remove('show'), 1800);
+}
+
+/* ============================================================
+   HELPERS — DOM builder, formatting
+   ============================================================ */
+function h(tag, attrs = {}, ...children) {
+  const el = document.createElement(tag);
+  for (const [k, v] of Object.entries(attrs || {})) {
+    if (v == null || v === false) continue;
+    if (k === 'class') el.className = v;
+    else if (k === 'style' && typeof v === 'object') Object.assign(el.style, v);
+    else if (k === 'html') el.innerHTML = v;
+    else if (k.startsWith('on') && typeof v === 'function') el.addEventListener(k.slice(2).toLowerCase(), v);
+    else if (k === 'checked' || k === 'disabled' || k === 'selected') { if (v) el.setAttribute(k, ''); }
+    else el.setAttribute(k, v);
+  }
+  for (const c of children.flat(Infinity)) {
+    if (c == null || c === false) continue;
+    el.append(c instanceof Node ? c : document.createTextNode(String(c)));
+  }
+  return el;
+}
+
+function fmtMoney(n, { short = false } = {}) {
+  n = Number(n) || 0;
+  if (short) {
+    if (Math.abs(n) >= 1000) return '$' + (n / 1000).toFixed(n >= 10000 ? 0 : 1) + 'K';
+    return '$' + Math.round(n);
+  }
+  return '$' + n.toLocaleString(undefined, { maximumFractionDigits: 0 });
+}
+
+function parseMoney(v) {
+  if (!v) return 0;
+  const n = Number(String(v).replace(/[^0-9.\-]/g, ''));
+  return isFinite(n) ? n : 0;
+}
+
+function daysUntil(dateStr) {
+  if (!dateStr) return null;
+  const d = new Date(dateStr + 'T00:00:00');
+  if (isNaN(d)) return null;
+  const now = new Date();
+  now.setHours(0, 0, 0, 0);
+  return Math.round((d - now) / 86400000);
+}
+
+function fmtDate(dateStr) {
+  if (!dateStr) return '—';
+  const d = new Date(dateStr + 'T00:00:00');
+  if (isNaN(d)) return dateStr;
+  return d.toLocaleDateString(undefined, { month: 'long', day: 'numeric', year: 'numeric' });
+}
+
+function sectionTitle(eyebrow, title, sub) {
+  const wrap = h('div', { class: 'section-title' });
+  const tpl = document.getElementById('tpl-floral-divider');
+  wrap.append(tpl.content.cloneNode(true));
+  wrap.append(h('span', { class: 'eyebrow' }, eyebrow));
+  wrap.append(h('h2', {}, title));
+  if (sub) wrap.append(h('p', { class: 'lead' }, sub));
+  return wrap;
+}
+
+function emptyState(title, msg) {
+  return h('div', { class: 'empty' },
+    h('div', { class: 'empty-title' }, title),
+    h('div', { class: 'small' }, msg)
+  );
+}
+
+function statCard(label, value, sub, tint) {
+  return h('div', { class: 'stat-card' + (tint ? ' tint-' + tint : '') },
+    h('div', { class: 'stat-label' }, label),
+    h('div', { class: 'stat-value' }, value),
+    h('div', { class: 'stat-sub' }, sub || '')
+  );
+}
+
+function coupleDisplay(raw) {
+  // Split on &, "and", "+" and render with an italic serif ampersand between
+  if (!raw) return null;
+  const parts = String(raw).split(/\s*(?:&|\band\b|\+)\s*/i).map(s => s.trim()).filter(Boolean);
+  const wrap = h('div', { class: 'couple-display' });
+  if (parts.length < 2) {
+    wrap.append(h('span', { class: 'couple-name' }, parts[0] || raw));
+    return wrap;
+  }
+  wrap.append(h('span', { class: 'couple-name' }, parts[0]));
+  wrap.append(h('span', { class: 'couple-amp' }, '&'));
+  wrap.append(h('span', { class: 'couple-name' }, parts.slice(1).join(' & ')));
+  return wrap;
+}
+
+/* ============================================================
+   NAVIGATION
+   ============================================================ */
+const NAV = [
+  { id: 'dashboard', label: 'Dashboard', group: 'Overview' },
+  { id: 'vision',    label: 'Vision',    group: 'Overview' },
+  { id: 'tasks',     label: 'Organized', group: 'Planning' },
+  { id: 'vendors',   label: 'Vendors',   group: 'Planning' },
+  { id: 'budget',    label: 'Budget',    group: 'Planning' },
+  { id: 'timeline',  label: 'Timeline',  group: 'Planning' },
+  { id: 'guests',    label: 'Guests',    group: 'People' },
+  { id: 'dayof',     label: 'Day-Of',    group: 'People' },
+  { id: 'gifts',     label: 'Gifts',     group: 'People' },
+  { id: 'honeymoon',   label: 'Honeymoon',   group: 'After' },
+  { id: 'invitations', label: 'Invitations', group: 'Communicate' },
+  { id: 'inspo',       label: 'Inspiration', group: 'Keepsakes' },
+  { id: 'photos',    label: 'Photos',      group: 'Keepsakes' },
+  { id: 'journal',   label: 'Journal',     group: 'Keepsakes' },
+  { id: 'notes',     label: 'Notes',     group: 'Keepsakes' },
+  { id: 'pricing',   label: 'Upgrade',   group: 'Studio' },
+];
+
+function buildNav() {
+  const nav = document.getElementById('nav');
+  nav.innerHTML = '';
+  let currentGroup = null;
+  for (const n of NAV) {
+    if (n.group !== currentGroup) {
+      currentGroup = n.group;
+      nav.append(h('div', { class: 'nav-section-label' }, currentGroup));
+    }
+    const locked = n.id !== 'pricing' && !hasSection(n.id);
+    const b = h('button', {
+      class: 'nav-btn' + (State.ui.route === n.id ? ' active' : '') + (locked ? ' locked' : '') + (n.id === 'pricing' ? ' pricing-btn' : ''),
+      'data-id': n.id,
+      onClick: () => navigate(n.id)
+    }, n.label);
+    if (locked) {
+      b.append(h('span', { class: 'nav-lock', title: 'Upgrade to unlock' }, 'Locked'));
+    } else if (n.id === 'pricing') {
+      b.append(h('span', { class: 'nav-count', style: { background: 'var(--accent-dark)', color: '#fff', border: 'none' } }, currentTier().name));
+    } else {
+      const count = countForRoute(n.id);
+      if (count != null) b.append(h('span', { class: 'nav-count' }, String(count)));
+    }
+    nav.append(b);
+  }
+  // mobile select
+  const sel = document.getElementById('nav-select');
+  sel.innerHTML = '';
+  for (const n of NAV) {
+    const locked = n.id !== 'pricing' && !hasSection(n.id);
+    const o = h('option', { value: n.id }, n.label + (locked ? ' · Locked' : ''));
+    if (State.ui.route === n.id) o.setAttribute('selected', '');
+    sel.append(o);
+  }
+  sel.onchange = (e) => navigate(e.target.value);
+}
+
+function countForRoute(id) {
+  switch (id) {
+    case 'tasks': return State.tasks.filter(t => !t.done).length || null;
+    case 'vendors': return State.vendors.length || null;
+    case 'guests': return State.guests.length || null;
+    case 'budget': return State.budget.items.length || null;
+    case 'timeline': return State.timeline.length || null;
+    case 'dayof': return State.dayof.length || null;
+    case 'gifts': return State.gifts.length || null;
+    case 'inspo': return State.inspo.length || null;
+    case 'photos': return State.photos.length || null;
+    case 'journal': return State.journal.entries.length || null;
+    default: return null;
+  }
+}
+
+function navigate(id) {
+  // If section is locked, jump to pricing instead
+  if (id !== 'pricing' && !hasSection(id)) {
+    State.ui.route = 'pricing';
+    State.ui._lockedFrom = id;
+  } else {
+    State.ui.route = id;
+    State.ui._lockedFrom = null;
+  }
+  saveState();
+  render();
+  window.scrollTo({ top: 0, behavior: 'instant' });
+}
+
+/* ============================================================
+   RENDER ROUTER
+   ============================================================ */
+const Routes = {}; // filled by section scripts below
+
+function render() {
+  buildNav();
+  const mount = document.getElementById('route-mount');
+  mount.innerHTML = '';
+  const fn = Routes[State.ui.route] || Routes.dashboard;
+  const frag = fn();
+  const wrapper = h('div', { class: 'route' });
+  if (Array.isArray(frag)) frag.forEach(n => n && wrapper.append(n));
+  else if (frag) wrapper.append(frag);
+  mount.append(wrapper);
+}
+</script>
+
+<script>
+/* ============================================================
+   ROUTE: DASHBOARD
+   ============================================================ */
+Routes.dashboard = function () {
+  const c = State.couple;
+  const d = daysUntil(c.date);
+  const tasksOpen = State.tasks.filter(t => !t.done).length;
+  const tasksTotal = State.tasks.length;
+  const vendorsBooked = State.vendors.filter(v => v.status === 'booked').length;
+  const budgetPlanned = Number(State.budget.total) || State.budget.items.reduce((s, x) => s + (Number(x.planned) || 0), 0);
+  const budgetActual = State.budget.items.reduce((s, x) => s + (Number(x.actual) || 0), 0);
+  const attending = State.guests.filter(g => g.rsvp === 'accepted').reduce((s, g) => s + 1 + (g.plusOne ? 1 : 0), 0);
+
+  const heroRight = h('div', { class: 'panel', style: { padding: '18px' } },
+    h('h3', { style: { marginBottom: '10px' } }, 'Couple Snapshot'),
+    formGrid([
+      { span: 6, label: 'Couple Names', value: c.names, placeholder: 'Alex & Jordan',
+        on: (v) => { State.couple.names = v; saveState(); updateHeroCountdown(); } },
+      { span: 6, label: 'Wedding Date', type: 'date', value: c.date,
+        on: (v) => { State.couple.date = v; saveState(); updateHeroCountdown(); render(); } },
+      { span: 12, label: 'Wedding Location', value: c.location, placeholder: 'Venue, City',
+        on: (v) => { State.couple.location = v; saveState(); } },
+    ])
+  );
+
+  const coupleNamesLine = c.names ? coupleDisplay(c.names) : null;
+
+  const leftHero = h('div', {},
+    coupleNamesLine,
+    h('span', { class: 'eyebrow', style: coupleNamesLine ? { marginTop: '6px' } : {} }, d == null ? 'Browser Planner' : 'Days to Go'),
+    d == null
+      ? h('h2', { style: { marginTop: '10px' } }, 'The elegant local wedding planner that keeps everything together.')
+      : h('div', { class: 'countdown', id: 'hero-countdown' },
+          h('span', { class: 'days' }, String(Math.max(0, d))),
+          h('span', { class: 'label' }, d === 1 ? 'day to go' : d === 0 ? 'is the day' : d < 0 ? 'days since' : 'days to go')
+        ),
+    h('p', { class: 'muted', style: { marginTop: d == null ? '10px' : '4px', maxWidth: '52ch' } },
+      c.names ? `${c.location ? c.location : ''}${c.date ? (c.location ? '  \u00b7  ' : '') + fmtDate(c.date) : ''}`
+              : 'Wedding HQ turns your ideas, vendors, guests, budget, and day-of schedule into one browser workspace. Everything stays on your device.'
+    )
+  );
+
+  const hero = h('div', { class: 'hero-card' },
+    h('div', { class: 'hero-grid', style: { display: 'grid', gridTemplateColumns: '1.4fr 1fr', gap: '24px', alignItems: 'start', position: 'relative' } },
+      leftHero, heroRight)
+  );
+
+  const stats = h('div', { class: 'grid-4' },
+    statCard('Tasks', tasksOpen + (tasksTotal ? '/' + tasksTotal : ''), tasksOpen ? 'active' : (tasksTotal ? 'all done' : 'no tasks yet'), 'champagne'),
+    statCard('Vendors', String(vendorsBooked), vendorsBooked ? `of ${State.vendors.length} contacted` : 'none yet', 'sage'),
+    statCard('Budget', fmtMoney(budgetActual, { short: true }), budgetPlanned ? `of ${fmtMoney(budgetPlanned, { short: true })}` : 'no budget set', 'blush'),
+    statCard('Guests', String(attending), State.guests.length ? `of ${State.guests.length} invited` : 'none yet', 'dusk')
+  );
+
+  // Budget progress
+  const budgetPct = budgetPlanned > 0 ? Math.min(100, Math.round(budgetActual / budgetPlanned * 100)) : 0;
+  const budgetPanel = h('div', { class: 'panel' },
+    h('div', { class: 'panel-head' },
+      h('h3', {}, 'Budget progress'),
+      h('span', { class: 'eyebrow' }, budgetPlanned ? budgetPct + '% used' : 'not set')
+    ),
+    h('div', { style: { display: 'flex', justifyContent: 'space-between', fontSize: '13px' } },
+      h('span', { class: 'muted' }, 'Spent ' + fmtMoney(budgetActual)),
+      h('span', { class: 'muted' }, 'Planned ' + fmtMoney(budgetPlanned))
+    ),
+    h('div', { class: 'progress' + (budgetActual > budgetPlanned && budgetPlanned ? ' over' : '') },
+      h('span', { style: { width: (budgetPlanned ? Math.min(100, budgetActual / budgetPlanned * 100) : 0) + '%' } })
+    ),
+    h('p', { class: 'muted small', style: { marginTop: '10px' } },
+      budgetActual > budgetPlanned && budgetPlanned
+        ? 'You are over the planned total — review Budget to adjust.'
+        : 'Keep tracking expenses under Budget to see this update.'
+    )
+  );
+
+  // Upcoming priorities (top 4 open tasks)
+  const priorities = State.tasks
+    .filter(t => !t.done)
+    .sort((a, b) => (a.due || '9999').localeCompare(b.due || '9999'))
+    .slice(0, 4);
+  const prioritiesPanel = h('div', { class: 'panel' },
+    h('div', { class: 'panel-head' },
+      h('h3', {}, 'Upcoming priorities'),
+      h('button', { class: 'mini-btn', onClick: () => navigate('tasks') }, 'Open Organized')
+    ),
+    priorities.length === 0
+      ? h('p', { class: 'muted small' }, 'Add a task in Organized to see your next steps here.')
+      : h('div', {},
+          ...priorities.map((t, i) => h('div',
+            { style: { display: 'flex', alignItems: 'center', gap: '10px', padding: '12px 0',
+                       borderBottom: i < priorities.length - 1 ? '1px solid var(--border)' : 'none' } },
+            h('span', { style: { width: '8px', height: '8px', borderRadius: '999px', background: 'var(--accent-dark)' } }),
+            h('span', { style: { fontSize: '14px', fontWeight: 600, color: 'var(--heading)' } }, t.title),
+            t.due ? h('span', { class: 'muted small', style: { marginLeft: 'auto' } }, fmtDate(t.due)) : null
+          ))
+        )
+  );
+
+  const dashGrid = h('div', { class: 'dashboard-grid' }, budgetPanel, prioritiesPanel);
+
+  // Quick actions
+  const quickActions = h('div', { class: 'panel' },
+    h('h3', {}, 'Quick actions'),
+    h('div', { class: 'grid-3' },
+      h('button', { class: 'ghost-btn', onClick: () => { navigate('tasks'); setTimeout(() => document.getElementById('new-task')?.focus(), 60); } }, '+ Add task'),
+      h('button', { class: 'ghost-btn', onClick: () => { navigate('vendors'); setTimeout(() => document.getElementById('new-vendor')?.focus(), 60); } }, '+ Add vendor'),
+      h('button', { class: 'ghost-btn', onClick: () => { navigate('budget'); setTimeout(() => document.getElementById('new-budget-cat')?.focus(), 60); } }, '+ Log expense')
+    )
+  );
+
+  // Mood / vision chips preview
+  const moodPanel = State.vision.moodTags.length ? h('div', { class: 'panel' },
+    h('div', { class: 'panel-head' },
+      h('h3', {}, 'Vision mood'),
+      h('button', { class: 'mini-btn', onClick: () => navigate('vision') }, 'Edit vision')
+    ),
+    h('div', { style: { display: 'flex', flexWrap: 'wrap', gap: '8px' } },
+      ...State.vision.moodTags.map(t => h('span', { class: 'chip' }, t))
+    )
+  ) : null;
+
+  return [hero, stats, dashGrid, quickActions, moodPanel];
+};
+
+function updateHeroCountdown() {
+  // Minimal live update without full rerender — for snapshot inputs
+  const el = document.getElementById('hero-countdown');
+  if (!el) return;
+  const d = daysUntil(State.couple.date);
+  if (d == null) return;
+  el.querySelector('.days').textContent = String(Math.max(0, d));
+  el.querySelector('.label').textContent = d === 1 ? 'day to go' : d === 0 ? 'is the day' : d < 0 ? 'days since' : 'days to go';
+}
+
+/* Form grid helper — reused across sections */
+function formGrid(fields) {
+  const g = h('div', { class: 'form-grid' });
+  for (const f of fields) {
+    const field = h('div', { class: 'field span-' + (f.span || 12) });
+    field.append(h('label', {}, f.label));
+    let input;
+    if (f.type === 'textarea') {
+      input = h('textarea', { placeholder: f.placeholder || '' });
+      input.value = f.value || '';
+    } else if (f.type === 'select') {
+      input = h('select', {});
+      for (const opt of f.options) {
+        const o = h('option', { value: opt.value }, opt.label);
+        if (opt.value === f.value) o.setAttribute('selected', '');
+        input.append(o);
+      }
+    } else {
+      input = h('input', { type: f.type || 'text', placeholder: f.placeholder || '' });
+      input.value = f.value || '';
+    }
+    if (f.id) input.id = f.id;
+    input.addEventListener('input', (e) => f.on && f.on(e.target.value));
+    input.addEventListener('change', (e) => f.on && f.on(e.target.value));
+    field.append(input);
+    g.append(field);
+  }
+  return g;
+}
+</script>
+
+<script>
+/* ============================================================
+   ROUTE: VISION
+   ============================================================ */
+Routes.vision = function () {
+  const v = State.vision;
+  const suggestions = ['Romantic','Editorial','Garden Party','Golden Hour','Intimate','Candlelit','Olive & Ivory','Rustic','Modern','Minimalist','Black Tie','Boho'];
+
+  const visionPanel = h('div', { class: 'panel' },
+    h('h3', {}, 'Wedding vision'),
+    formGrid([
+      { span: 6, label: 'Style Keywords', value: v.keywords, placeholder: 'Romantic, editorial, modern',
+        on: (x) => { v.keywords = x; saveState(); } },
+      { span: 6, label: 'Color Palette', value: v.colors, placeholder: 'Cream, olive, taupe',
+        on: (x) => { v.colors = x; saveState(); } },
+      { span: 12, type: 'textarea', label: 'Top Priorities', value: v.priorities,
+        placeholder: 'Guest experience · photography · intimate dinner',
+        on: (x) => { v.priorities = x; saveState(); } },
+      { span: 12, type: 'textarea', label: 'Our Why', value: v.why,
+        placeholder: 'Because we want our favorite people in one room…',
+        on: (x) => { v.why = x; saveState(); } },
+    ])
+  );
+
+  const notePanel = h('div', { class: 'panel' },
+    h('h3', {}, 'Inspiration notes'),
+    (() => {
+      const t = h('textarea', { class: 'note-area', placeholder: 'Jot your imagined moments, smells, sounds, textures…' });
+      t.value = v.notes || '';
+      t.addEventListener('input', () => { v.notes = t.value; saveState(); });
+      return t;
+    })()
+  );
+
+  // Mood tag picker
+  const moodPanel = h('div', { class: 'panel' },
+    h('h3', {}, 'Mood tags'),
+    h('p', { class: 'muted small', style: { marginBottom: '12px' } }, 'Pick the words that describe the feeling you want. These show up on your dashboard.'),
+    h('div', { id: 'mood-current', style: { display: 'flex', flexWrap: 'wrap', gap: '8px', marginBottom: '14px' } },
+      ...v.moodTags.map(t => moodChip(t))
+    ),
+    h('div', { style: { display: 'flex', flexWrap: 'wrap', gap: '6px' } },
+      ...suggestions.map(s => {
+        const active = v.moodTags.includes(s);
+        return h('button', {
+          class: 'chip',
+          style: active
+            ? { background: 'var(--accent-dark)', color: '#fff', cursor: 'pointer' }
+            : { cursor: 'pointer' },
+          onClick: () => {
+            const i = v.moodTags.indexOf(s);
+            if (i >= 0) v.moodTags.splice(i, 1); else v.moodTags.push(s);
+            saveState(); render();
+          }
+        }, s);
+      }),
+      (() => {
+        const input = h('input', { placeholder: '+ custom tag', style: { border: '1px dashed var(--border)', background: 'transparent', borderRadius: '999px', padding: '6px 12px', fontSize: '12px', minWidth: '120px', minHeight: 'auto' } });
+        input.addEventListener('keydown', (e) => {
+          if (e.key === 'Enter' && input.value.trim()) {
+            v.moodTags.push(input.value.trim()); input.value = ''; saveState(); render();
+          }
+        });
+        return input;
+      })()
+    )
+  );
+
+  return [sectionTitle('Our Vision', 'Style, priorities, and the why', 'Capture the emotional and aesthetic direction before vendor and budget decisions start piling up.'),
+          h('div', { class: 'grid-2' }, visionPanel, notePanel),
+          moodPanel];
+};
+
+function moodChip(t) {
+  return h('span', { class: 'chip removable' },
+    t,
+    h('button', { class: 'x', onClick: () => {
+      const i = State.vision.moodTags.indexOf(t);
+      if (i >= 0) State.vision.moodTags.splice(i, 1); saveState(); render();
+    }}, '×')
+  );
+}
+</script>
+
+<script>
+/* ============================================================
+   ROUTE: TASKS (Organized)
+   ============================================================ */
+Routes.tasks = function () {
+  const active = State.tasks.filter(t => !t.done);
+  const done = State.tasks.filter(t => t.done);
+  const cats = [...new Set(State.tasks.map(t => t.category).filter(Boolean))];
+
+  // New-task bar
+  const newBar = h('div', { class: 'panel' },
+    h('h3', {}, 'Add a task'),
+    (() => {
+      const row = h('div', { style: { display: 'grid', gridTemplateColumns: '1.6fr 1fr 1fr auto', gap: '10px', alignItems: 'end' } });
+      const titleIn = h('input', { id: 'new-task', placeholder: 'e.g. Book final venue walkthrough' });
+      const dueIn = h('input', { type: 'date' });
+      const ownerIn = h('input', { placeholder: 'Owner (optional)' });
+      const submit = () => {
+        if (!titleIn.value.trim()) return;
+        State.tasks.unshift({ id: uid(), title: titleIn.value.trim(), due: dueIn.value, owner: ownerIn.value.trim(), done: false, category: '' });
+        saveState(); render();
+        toast('Task added');
+      };
+      for (const inp of [titleIn, dueIn, ownerIn]) {
+        inp.addEventListener('keydown', (e) => { if (e.key === 'Enter') submit(); });
+      }
+      const fieldT = h('div', { class: 'field' }, h('label', {}, 'Task'), titleIn);
+      const fieldD = h('div', { class: 'field' }, h('label', {}, 'Due'), dueIn);
+      const fieldO = h('div', { class: 'field' }, h('label', {}, 'Owner'), ownerIn);
+      const btn = h('button', { class: 'action-btn', onClick: submit }, 'Add');
+      row.append(fieldT, fieldD, fieldO, btn);
+      return row;
+    })()
+  );
+
+  // Active list
+  const activeList = h('div', { class: 'panel' },
+    h('div', { class: 'panel-head' },
+      h('h3', {}, 'Active · ' + active.length),
+      h('span', { class: 'eyebrow' }, done.length + ' done')
+    ),
+    active.length === 0
+      ? emptyState('No open tasks', 'Add a task above to start building your to-do list.')
+      : h('div', {}, ...active.map(taskRow))
+  );
+
+  const doneList = done.length === 0 ? null : h('div', { class: 'panel' },
+    h('div', { class: 'panel-head' },
+      h('h3', {}, 'Completed · ' + done.length),
+      h('button', { class: 'mini-btn', onClick: () => {
+        if (confirm('Remove all completed tasks?')) {
+          State.tasks = State.tasks.filter(t => !t.done); saveState(); render();
+        }
+      }}, 'Clear completed')
+    ),
+    h('div', {}, ...done.map(taskRow))
+  );
+
+  return [sectionTitle('Organized', 'Every task, one clean checklist', 'Keep planning moments and small errands all in one place — nothing slips through.'),
+          newBar, activeList, doneList];
+};
+
+function taskRow(t) {
+  const cls = 'task-row' + (t.done ? ' done' : '');
+  const cb = h('input', { type: 'checkbox', class: 'task-check', checked: t.done });
+  cb.addEventListener('change', () => {
+    t.done = cb.checked; saveState(); render();
+  });
+  return h('div', { class: cls },
+    cb,
+    h('div', { class: 'task-body' },
+      h('div', { class: 'task-title' }, t.title),
+      h('div', { class: 'task-meta' },
+        t.due ? h('span', {}, 'Due ' + fmtDate(t.due)) : null,
+        t.owner ? h('span', {}, '· ' + t.owner) : null,
+        t.category ? h('span', {}, '· ' + t.category) : null
+      )
+    ),
+    h('button', { class: 'icon-btn', title: 'Delete', onClick: () => {
+      State.tasks = State.tasks.filter(x => x.id !== t.id); saveState(); render();
+    }}, '×')
+  );
+}
+</script>
+
+<script>
+/* ============================================================
+   ROUTE: VENDORS
+   ============================================================ */
+const VENDOR_CATEGORIES = ['Venue','Catering','Photography','Videography','Florist','Music / DJ','Band','Cake','Attire','Hair & Makeup','Officiant','Rentals','Stationery','Transport','Other'];
+const VENDOR_STATUSES = [
+  { value: 'contacted', label: 'Contacted' },
+  { value: 'pending',   label: 'Pending' },
+  { value: 'booked',    label: 'Booked' },
+  { value: 'declined',  label: 'Declined' },
+];
+const PAID_STATUSES = [
+  { value: 'pending', label: 'Unpaid' },
+  { value: 'partial', label: 'Partial' },
+  { value: 'paid',    label: 'Paid' },
+];
+
+Routes.vendors = function () {
+  const booked = State.vendors.filter(v => v.status === 'booked').length;
+  const totalQuoted = State.vendors.reduce((s, v) => s + parseMoney(v.quoted), 0);
+
+  const stats = h('div', { class: 'grid-4' },
+    statCard('Total Vendors', String(State.vendors.length), 'in your list'),
+    statCard('Booked', String(booked), booked ? 'confirmed' : 'none yet'),
+    statCard('Pending', String(State.vendors.filter(v => v.status === 'pending' || v.status === 'contacted').length), 'awaiting reply'),
+    statCard('Quoted', fmtMoney(totalQuoted, { short: true }), 'across vendors')
+  );
+
+  // New vendor bar
+  const newBar = h('div', { class: 'panel' },
+    h('h3', {}, 'Add a vendor'),
+    (() => {
+      const row = h('div', { style: { display: 'grid', gridTemplateColumns: '1.6fr 1fr 1fr auto', gap: '10px', alignItems: 'end' } });
+      const nameIn = h('input', { id: 'new-vendor', placeholder: 'Business name' });
+      const catSel = h('select', {});
+      for (const c of ['', ...VENDOR_CATEGORIES]) catSel.append(h('option', { value: c }, c || 'Category…'));
+      const quoteIn = h('input', { placeholder: 'Quote (e.g. 3200)', type: 'text' });
+      const submit = () => {
+        if (!nameIn.value.trim()) return;
+        State.vendors.unshift({
+          id: uid(), name: nameIn.value.trim(), category: catSel.value,
+          contact: '', phone: '', email: '',
+          quoted: quoteIn.value, status: 'contacted', paid: 'pending', notes: ''
+        });
+        saveState(); render();
+        toast('Vendor added');
+      };
+      for (const inp of [nameIn, quoteIn]) inp.addEventListener('keydown', (e) => { if (e.key === 'Enter') submit(); });
+      row.append(
+        h('div', { class: 'field' }, h('label', {}, 'Name'), nameIn),
+        h('div', { class: 'field' }, h('label', {}, 'Category'), catSel),
+        h('div', { class: 'field' }, h('label', {}, 'Quoted $'), quoteIn),
+        h('button', { class: 'action-btn', onClick: submit }, 'Add')
+      );
+      return row;
+    })()
+  );
+
+  // Table
+  const table = h('div', { class: 'panel' },
+    h('div', { class: 'panel-head' }, h('h3', {}, 'Vendor master list')),
+    State.vendors.length === 0
+      ? emptyState('No vendors yet', 'Add vendors above to start tracking quotes, status, and payments.')
+      : h('div', { class: 'table-wrap' },
+          h('table', {},
+            h('thead', {}, h('tr', {},
+              h('th', {}, 'Vendor'),
+              h('th', {}, 'Category'),
+              h('th', {}, 'Contact'),
+              h('th', {}, 'Quote'),
+              h('th', {}, 'Status'),
+              h('th', {}, 'Paid'),
+              h('th', {}, '')
+            )),
+            h('tbody', {}, ...State.vendors.map(vendorRow))
+          )
+        )
+  );
+
+  return [sectionTitle('Vendors', 'Compare, track, and stay ahead of contracts',
+    'Keep every inquiry, payment, and contract status in one clean place.'),
+    stats, newBar, table];
+};
+
+function vendorRow(v) {
+  const editable = (val, on, style) => {
+    const inp = h('input', { value: val || '', placeholder: '—', style: Object.assign({ border: 'none', background: 'transparent', padding: '4px 6px', minHeight: 'auto', borderRadius: '8px' }, style || {}) });
+    inp.addEventListener('input', (e) => { on(e.target.value); saveState(); });
+    inp.addEventListener('focus', () => inp.style.background = 'var(--bg)');
+    inp.addEventListener('blur', () => inp.style.background = 'transparent');
+    return inp;
+  };
+  const selector = (val, opts, on) => {
+    const s = h('select', { style: { border: 'none', background: 'transparent', padding: '4px 6px', minHeight: 'auto', borderRadius: '8px', fontSize: '12px', fontWeight: 600, cursor: 'pointer' } });
+    for (const o of opts) {
+      const opt = h('option', { value: o.value }, o.label);
+      if (o.value === val) opt.setAttribute('selected', '');
+      s.append(opt);
+    }
+    s.addEventListener('change', (e) => { on(e.target.value); saveState(); render(); });
+    return s;
+  };
+  const nameCell = h('td', { class: 'name' }, editable(v.name, (x) => v.name = x, { fontWeight: 600, color: 'var(--heading)' }));
+  const catCell = h('td', {}, (() => {
+    const s = h('select', { style: { border: 'none', background: 'transparent', padding: '4px 6px', minHeight: 'auto', borderRadius: '8px', fontSize: '13px' } });
+    for (const c of ['', ...VENDOR_CATEGORIES]) {
+      const opt = h('option', { value: c }, c || '—');
+      if (c === v.category) opt.setAttribute('selected', '');
+      s.append(opt);
+    }
+    s.addEventListener('change', (e) => { v.category = e.target.value; saveState(); });
+    return s;
+  })());
+  const contactCell = h('td', {}, editable(v.contact, (x) => v.contact = x));
+  const quotedCell = h('td', { class: 'num' }, editable(v.quoted, (x) => v.quoted = x, { textAlign: 'right' }));
+  const statusCell = h('td', {},
+    h('span', { class: 'status ' + v.status, style: { cursor: 'pointer' } }, VENDOR_STATUSES.find(s => s.value === v.status)?.label || v.status),
+    selector(v.status, VENDOR_STATUSES, (val) => v.status = val)
+  );
+  // Trick: show status as a chip but use select behind; simpler — just use select
+  statusCell.innerHTML = '';
+  statusCell.append(selector(v.status, VENDOR_STATUSES, (val) => v.status = val));
+  const paidCell = h('td', {});
+  paidCell.append(selector(v.paid, PAID_STATUSES, (val) => v.paid = val));
+  const delCell = h('td', {}, h('button', { class: 'icon-btn', title: 'Delete', onClick: () => {
+    if (confirm('Remove ' + (v.name || 'this vendor') + '?')) {
+      State.vendors = State.vendors.filter(x => x.id !== v.id); saveState(); render();
+    }
+  }}, '×'));
+
+  // add a color swatch on status
+  const chipWrap = h('div', { style: { display: 'flex', alignItems: 'center', gap: '6px' } },
+    h('span', { class: 'status ' + v.status }, VENDOR_STATUSES.find(s => s.value === v.status)?.label || v.status));
+  statusCell.innerHTML = '';
+  const sSel = selector(v.status, VENDOR_STATUSES, (val) => v.status = val);
+  sSel.style.fontWeight = 600;
+  statusCell.append(sSel);
+
+  paidCell.innerHTML = '';
+  const pSel = selector(v.paid, PAID_STATUSES, (val) => v.paid = val);
+  pSel.style.fontWeight = 600;
+  paidCell.append(pSel);
+
+  return h('tr', {}, nameCell, catCell, contactCell, quotedCell, statusCell, paidCell, delCell);
+}
+</script>
+
+<script>
+/* ============================================================
+   ROUTE: BUDGET
+   ============================================================ */
+const BUDGET_STATUSES = [
+  { value: 'planning', label: 'Planning' },
+  { value: 'booked',   label: 'Booked' },
+  { value: 'paid',     label: 'Paid' },
+  { value: 'over',     label: 'Over' },
+];
+
+Routes.budget = function () {
+  const items = State.budget.items;
+  const plannedSum = items.reduce((s, x) => s + (Number(x.planned) || 0), 0);
+  const actualSum = items.reduce((s, x) => s + (Number(x.actual) || 0), 0);
+  const total = Number(State.budget.total) || 0;
+  const target = total || plannedSum;
+  const pct = target ? (actualSum / target * 100) : 0;
+
+  const totalBar = h('div', { class: 'panel' },
+    h('div', { class: 'panel-head' },
+      h('h3', {}, 'Total budget'),
+      h('span', { class: 'eyebrow' }, target ? Math.round(pct) + '% used' : 'set total')
+    ),
+    h('div', { style: { display: 'grid', gridTemplateColumns: '1fr 2fr', gap: '18px', alignItems: 'center' } },
+      (() => {
+        const inp = h('input', { type: 'text', placeholder: 'e.g. 32000', value: total || '' });
+        inp.addEventListener('input', (e) => { State.budget.total = parseMoney(e.target.value); saveState(); });
+        inp.addEventListener('blur', () => render());
+        return h('div', { class: 'field' },
+          h('label', {}, 'Target total ($)'), inp);
+      })(),
+      h('div', {},
+        h('div', { style: { display: 'flex', justifyContent: 'space-between', fontSize: '13px', color: 'var(--muted)' } },
+          h('span', {}, 'Spent ' + fmtMoney(actualSum)),
+          h('span', {}, (target ? fmtMoney(target - actualSum) + ' remaining' : 'No target set'))
+        ),
+        h('div', { class: 'progress' + (target && actualSum > target ? ' over' : '') },
+          h('span', { style: { width: Math.min(100, pct) + '%' } })
+        )
+      )
+    )
+  );
+
+  const stats = h('div', { class: 'grid-4' },
+    statCard('Planned', fmtMoney(plannedSum, { short: true }), 'across categories'),
+    statCard('Spent',   fmtMoney(actualSum, { short: true }), plannedSum ? Math.round(actualSum / plannedSum * 100) + '% of plan' : '—'),
+    statCard('Remaining', fmtMoney(Math.max(0, (target || plannedSum) - actualSum), { short: true }), (target || plannedSum) ? 'of target' : '—'),
+    statCard('Categories', String(items.length), 'line items')
+  );
+
+  const newBar = h('div', { class: 'panel' },
+    h('h3', {}, 'Add a budget line'),
+    (() => {
+      const row = h('div', { style: { display: 'grid', gridTemplateColumns: '1.4fr 1fr 1fr 1fr auto', gap: '10px', alignItems: 'end' } });
+      const catIn = h('input', { id: 'new-budget-cat', placeholder: 'e.g. Venue' });
+      const plannedIn = h('input', { placeholder: '9500' });
+      const actualIn = h('input', { placeholder: '0' });
+      const statusSel = h('select', {});
+      for (const s of BUDGET_STATUSES) statusSel.append(h('option', { value: s.value }, s.label));
+      const submit = () => {
+        if (!catIn.value.trim()) return;
+        State.budget.items.push({
+          id: uid(), category: catIn.value.trim(),
+          planned: parseMoney(plannedIn.value), actual: parseMoney(actualIn.value),
+          status: statusSel.value || 'planning', notes: ''
+        });
+        saveState(); render();
+        toast('Budget line added');
+      };
+      for (const inp of [catIn, plannedIn, actualIn]) inp.addEventListener('keydown', (e) => { if (e.key === 'Enter') submit(); });
+      row.append(
+        h('div', { class: 'field' }, h('label', {}, 'Category'), catIn),
+        h('div', { class: 'field' }, h('label', {}, 'Planned $'), plannedIn),
+        h('div', { class: 'field' }, h('label', {}, 'Actual $'), actualIn),
+        h('div', { class: 'field' }, h('label', {}, 'Status'), statusSel),
+        h('button', { class: 'action-btn', onClick: submit }, 'Add')
+      );
+      return row;
+    })()
+  );
+
+  const table = h('div', { class: 'panel' },
+    h('div', { class: 'panel-head' }, h('h3', {}, 'Budget breakdown')),
+    items.length === 0
+      ? emptyState('No line items yet', 'Add categories to start tracking planned vs. actual cost.')
+      : h('div', { class: 'table-wrap' },
+          h('table', {},
+            h('thead', {}, h('tr', {},
+              h('th', {}, 'Category'),
+              h('th', {}, 'Planned'),
+              h('th', {}, 'Actual'),
+              h('th', {}, 'Delta'),
+              h('th', {}, 'Status'),
+              h('th', {}, '')
+            )),
+            h('tbody', {}, ...items.map(budgetRow))
+          )
+        )
+  );
+
+  return [sectionTitle('Budget', 'See the numbers before they surprise you',
+    'Track estimates, actual costs, and whether you are still under control.'),
+    totalBar, stats, newBar, table];
+};
+
+function budgetRow(x) {
+  const numIn = (val, on) => {
+    const i = h('input', { value: val || '', style: { border: 'none', background: 'transparent', padding: '4px 6px', minHeight: 'auto', textAlign: 'right', fontVariantNumeric: 'tabular-nums' } });
+    i.addEventListener('input', (e) => { on(parseMoney(e.target.value)); saveState(); });
+    i.addEventListener('blur', () => render());
+    return i;
+  };
+  const catIn = h('input', { value: x.category, style: { border: 'none', background: 'transparent', padding: '4px 6px', minHeight: 'auto', fontWeight: 600, color: 'var(--heading)' } });
+  catIn.addEventListener('input', (e) => { x.category = e.target.value; saveState(); });
+  const delta = (Number(x.actual) || 0) - (Number(x.planned) || 0);
+  const deltaCell = h('td', { class: 'num',
+    style: { color: delta > 0 ? 'var(--danger)' : (delta < 0 ? 'var(--success)' : 'var(--muted)') } },
+    delta === 0 ? '—' : (delta > 0 ? '+' : '−') + fmtMoney(Math.abs(delta)));
+  const statusSel = h('select', { style: { border: 'none', background: 'transparent', padding: '4px 6px', minHeight: 'auto', fontWeight: 600, cursor: 'pointer' } });
+  for (const s of BUDGET_STATUSES) {
+    const opt = h('option', { value: s.value }, s.label);
+    if (s.value === x.status) opt.setAttribute('selected', '');
+    statusSel.append(opt);
+  }
+  statusSel.addEventListener('change', (e) => { x.status = e.target.value; saveState(); render(); });
+
+  return h('tr', {},
+    h('td', { class: 'name' }, catIn),
+    h('td', { class: 'num' }, numIn(x.planned, (v) => x.planned = v)),
+    h('td', { class: 'num' }, numIn(x.actual, (v) => x.actual = v)),
+    deltaCell,
+    h('td', {}, statusSel),
+    h('td', {}, h('button', { class: 'icon-btn', onClick: () => {
+      State.budget.items = State.budget.items.filter(y => y.id !== x.id); saveState(); render();
+    }}, '×'))
+  );
+}
+</script>
+
+<script>
+/* ============================================================
+   ROUTE: TIMELINE
+   ============================================================ */
+const TIMELINE_TYPES = ['Planning Milestone','Appointment','Wedding Day','Reminder','Payment Due','Other'];
+
+Routes.timeline = function () {
+  const sorted = [...State.timeline].sort((a, b) => (a.when || '').localeCompare(b.when || ''));
+
+  const newBar = h('div', { class: 'panel' },
+    h('h3', {}, 'Add a milestone'),
+    (() => {
+      const row = h('div', { style: { display: 'grid', gridTemplateColumns: '1fr 1.6fr 1fr 1fr auto', gap: '10px', alignItems: 'end' } });
+      const whenIn = h('input', { placeholder: '9 Months / 2026-06-01 / 3:00pm' });
+      const actIn = h('input', { placeholder: 'Activity' });
+      const ownerIn = h('input', { placeholder: 'Owner' });
+      const typeSel = h('select', {});
+      for (const t of TIMELINE_TYPES) typeSel.append(h('option', { value: t }, t));
+      const submit = () => {
+        if (!actIn.value.trim()) return;
+        State.timeline.push({ id: uid(), when: whenIn.value, activity: actIn.value.trim(), owner: ownerIn.value, type: typeSel.value });
+        saveState(); render();
+        toast('Milestone added');
+      };
+      row.append(
+        h('div', { class: 'field' }, h('label', {}, 'When'), whenIn),
+        h('div', { class: 'field' }, h('label', {}, 'Activity'), actIn),
+        h('div', { class: 'field' }, h('label', {}, 'Owner'), ownerIn),
+        h('div', { class: 'field' }, h('label', {}, 'Type'), typeSel),
+        h('button', { class: 'action-btn', onClick: submit }, 'Add')
+      );
+      return row;
+    })()
+  );
+
+  const table = h('div', { class: 'panel' },
+    h('div', { class: 'panel-head' }, h('h3', {}, 'Timeline events')),
+    sorted.length === 0
+      ? emptyState('No timeline yet', 'Add milestones above — from save-the-dates to day-of moments.')
+      : h('div', { class: 'table-wrap' },
+          h('table', {},
+            h('thead', {}, h('tr', {},
+              h('th', {}, 'When'),
+              h('th', {}, 'Activity'),
+              h('th', {}, 'Owner'),
+              h('th', {}, 'Type'),
+              h('th', {}, '')
+            )),
+            h('tbody', {}, ...sorted.map(e => h('tr', {},
+              h('td', { class: 'name' }, e.when || '—'),
+              h('td', {}, e.activity),
+              h('td', {}, e.owner || '—'),
+              h('td', {}, h('span', { class: 'chip' }, e.type)),
+              h('td', {}, h('button', { class: 'icon-btn', onClick: () => {
+                State.timeline = State.timeline.filter(x => x.id !== e.id); saveState(); render();
+              }}, '×'))
+            )))
+          )
+        )
+  );
+
+  return [sectionTitle('Timeline', 'Calendar your milestones and wedding-day flow',
+    'Use this for big planning moments and the final day-of run sheet.'), newBar, table];
+};
+</script>
+
+<script>
+/* ============================================================
+   ROUTE: GUESTS
+   ============================================================ */
+const RSVP_STATUSES = [
+  { value: 'pending',  label: 'Pending' },
+  { value: 'accepted', label: 'Accepted' },
+  { value: 'declined', label: 'Declined' },
+];
+const PARTIES = ['Bride side','Groom side','Partner A side','Partner B side','Friends','Family','Work','Other'];
+
+Routes.guests = function () {
+  const attending = State.guests.filter(g => g.rsvp === 'accepted').reduce((s, g) => s + 1 + (g.plusOne ? 1 : 0), 0);
+  const pending = State.guests.filter(g => g.rsvp === 'pending').length;
+  const declined = State.guests.filter(g => g.rsvp === 'declined').length;
+  const totalInvited = State.guests.reduce((s, g) => s + 1 + (g.plusOne ? 1 : 0), 0);
+
+  const stats = h('div', { class: 'grid-4' },
+    statCard('Invited', String(totalInvited), 'total head count'),
+    statCard('Attending', String(attending), totalInvited ? Math.round(attending / totalInvited * 100) + '%' : '—'),
+    statCard('Pending', String(pending), 'awaiting reply'),
+    statCard('Declined', String(declined), 'with regrets')
+  );
+
+  const newBar = h('div', { class: 'panel' },
+    h('h3', {}, 'Add a guest'),
+    (() => {
+      const row = h('div', { style: { display: 'grid', gridTemplateColumns: '1.4fr 1fr 1fr 1fr auto', gap: '10px', alignItems: 'end' } });
+      const nameIn = h('input', { placeholder: 'Full name' });
+      const partySel = h('select', {});
+      for (const p of ['', ...PARTIES]) partySel.append(h('option', { value: p }, p || 'Party…'));
+      const rsvpSel = h('select', {});
+      for (const r of RSVP_STATUSES) rsvpSel.append(h('option', { value: r.value }, r.label));
+      const tableIn = h('input', { placeholder: 'Table' });
+      const submit = () => {
+        if (!nameIn.value.trim()) return;
+        State.guests.unshift({
+          id: uid(), name: nameIn.value.trim(), party: partySel.value,
+          rsvp: rsvpSel.value, plusOne: false, dietary: '', table: tableIn.value, address: ''
+        });
+        saveState(); render();
+      };
+      for (const inp of [nameIn, tableIn]) inp.addEventListener('keydown', (e) => { if (e.key === 'Enter') submit(); });
+      row.append(
+        h('div', { class: 'field' }, h('label', {}, 'Name'), nameIn),
+        h('div', { class: 'field' }, h('label', {}, 'Party'), partySel),
+        h('div', { class: 'field' }, h('label', {}, 'RSVP'), rsvpSel),
+        h('div', { class: 'field' }, h('label', {}, 'Table'), tableIn),
+        h('button', { class: 'action-btn', onClick: submit }, 'Add')
+      );
+      return row;
+    })()
+  );
+
+  const table = h('div', { class: 'panel' },
+    h('div', { class: 'panel-head' }, h('h3', {}, 'Guest list')),
+    State.guests.length === 0
+      ? emptyState('No guests yet', 'Add guests above to start tracking RSVPs, dietary notes, and seating.')
+      : h('div', { class: 'table-wrap' },
+          h('table', {},
+            h('thead', {}, h('tr', {},
+              h('th', {}, 'Name'),
+              h('th', {}, 'Party'),
+              h('th', {}, 'RSVP'),
+              h('th', {}, '+1'),
+              h('th', {}, 'Dietary'),
+              h('th', {}, 'Table'),
+              h('th', {}, '')
+            )),
+            h('tbody', {}, ...State.guests.map(guestRow))
+          )
+        )
+  );
+
+  return [sectionTitle('Guests & Seating', 'Track RSVPs, dietary notes, and seating',
+    'Everything you need to keep your guest experience organized.'),
+    stats, newBar, table];
+};
+
+function guestRow(g) {
+  const mkInput = (val, on, style = {}) => {
+    const i = h('input', { value: val || '', placeholder: '—', style: Object.assign({ border: 'none', background: 'transparent', padding: '4px 6px', minHeight: 'auto' }, style) });
+    i.addEventListener('input', (e) => { on(e.target.value); saveState(); });
+    return i;
+  };
+  const mkSelect = (val, opts, on, style = {}) => {
+    const s = h('select', { style: Object.assign({ border: 'none', background: 'transparent', padding: '4px 6px', minHeight: 'auto', fontWeight: 600, cursor: 'pointer' }, style) });
+    for (const o of opts) {
+      const opt = h('option', { value: o.value ?? o }, o.label ?? o);
+      if ((o.value ?? o) === val) opt.setAttribute('selected', '');
+      s.append(opt);
+    }
+    s.addEventListener('change', (e) => { on(e.target.value); saveState(); render(); });
+    return s;
+  };
+
+  const partySel = mkSelect(g.party, [{value:'', label:'—'}, ...PARTIES.map(p => ({ value: p, label: p }))], (v) => g.party = v, { fontWeight: 400 });
+  const rsvpSel = mkSelect(g.rsvp, RSVP_STATUSES.map(s => ({ value: s.value, label: s.label })), (v) => g.rsvp = v);
+
+  const plusCheck = h('input', { type: 'checkbox', class: 'task-check', checked: g.plusOne, style: { width: '18px', height: '18px' } });
+  plusCheck.addEventListener('change', () => { g.plusOne = plusCheck.checked; saveState(); render(); });
+
+  return h('tr', {},
+    h('td', { class: 'name' }, mkInput(g.name, (v) => g.name = v, { fontWeight: 600, color: 'var(--heading)' })),
+    h('td', {}, partySel),
+    h('td', {}, rsvpSel),
+    h('td', {}, plusCheck),
+    h('td', {}, mkInput(g.dietary, (v) => g.dietary = v)),
+    h('td', {}, mkInput(g.table, (v) => g.table = v)),
+    h('td', {}, h('button', { class: 'icon-btn', onClick: () => {
+      State.guests = State.guests.filter(x => x.id !== g.id); saveState(); render();
+    }}, '×'))
+  );
+}
+</script>
+
+<script>
+/* ============================================================
+   ROUTE: DAY-OF
+   ============================================================ */
+Routes.dayof = function () {
+  const sorted = [...State.dayof].sort((a, b) => (a.time || '').localeCompare(b.time || ''));
+
+  const newBar = h('div', { class: 'panel' },
+    h('h3', {}, 'Add to run-of-show'),
+    (() => {
+      const row = h('div', { style: { display: 'grid', gridTemplateColumns: '0.8fr 1.6fr 1fr auto', gap: '10px', alignItems: 'end' } });
+      const timeIn = h('input', { type: 'time' });
+      const actIn = h('input', { placeholder: 'Activity (e.g. First look)' });
+      const whoIn = h('input', { placeholder: 'Who / where' });
+      const submit = () => {
+        if (!actIn.value.trim()) return;
+        State.dayof.push({ id: uid(), time: timeIn.value, activity: actIn.value.trim(), who: whoIn.value, notes: '' });
+        saveState(); render();
+      };
+      row.append(
+        h('div', { class: 'field' }, h('label', {}, 'Time'), timeIn),
+        h('div', { class: 'field' }, h('label', {}, 'Activity'), actIn),
+        h('div', { class: 'field' }, h('label', {}, 'Who / where'), whoIn),
+        h('button', { class: 'action-btn', onClick: submit }, 'Add')
+      );
+      return row;
+    })()
+  );
+
+  const list = h('div', { class: 'panel' },
+    h('div', { class: 'panel-head' }, h('h3', {}, 'Day-of run sheet')),
+    sorted.length === 0
+      ? emptyState('No schedule yet', 'Build the day hour by hour — hair & makeup, first look, ceremony, toasts, first dance, send-off.')
+      : h('div', { style: { display: 'grid', gap: '10px' } },
+          ...sorted.map(e => dayOfRow(e))
+        )
+  );
+
+  return [sectionTitle('Day-Of', 'Your hour-by-hour wedding day',
+    'Print this and hand it to your planner, DJ, and photographer.'),
+    newBar, list];
+};
+
+function dayOfRow(e) {
+  const timeIn = h('input', { type: 'time', value: e.time, style: { border: '1px solid var(--border)', background: 'var(--bg)', padding: '8px 10px', borderRadius: '10px', minHeight: 'auto', width: '110px', fontWeight: 600, color: 'var(--heading)' } });
+  timeIn.addEventListener('change', () => { e.time = timeIn.value; saveState(); render(); });
+
+  const actIn = h('input', { value: e.activity, placeholder: 'Activity', style: { border: 'none', background: 'transparent', padding: '4px 6px', minHeight: 'auto', flex: '1', fontWeight: 600, color: 'var(--heading)' } });
+  actIn.addEventListener('input', () => { e.activity = actIn.value; saveState(); });
+
+  const whoIn = h('input', { value: e.who, placeholder: 'Who / where', style: { border: 'none', background: 'transparent', padding: '4px 6px', minHeight: 'auto', color: 'var(--muted)', fontSize: '13px' } });
+  whoIn.addEventListener('input', () => { e.who = whoIn.value; saveState(); });
+
+  return h('div', { style: { display: 'flex', alignItems: 'center', gap: '12px', padding: '14px', border: '1px solid var(--border)', borderRadius: '14px', background: 'var(--bg)' } },
+    timeIn,
+    h('div', { style: { flex: '1', display: 'grid', gap: '2px', minWidth: 0 } }, actIn, whoIn),
+    h('button', { class: 'icon-btn', onClick: () => {
+      State.dayof = State.dayof.filter(x => x.id !== e.id); saveState(); render();
+    }}, '×')
+  );
+}
+</script>
+
+<script>
+/* ============================================================
+   ROUTE: GIFTS
+   ============================================================ */
+Routes.gifts = function () {
+  const thanked = State.gifts.filter(g => g.thanked).length;
+
+  const stats = h('div', { class: 'grid-3' },
+    statCard('Gifts', String(State.gifts.length), 'logged'),
+    statCard('Thank-yous sent', String(thanked), State.gifts.length ? Math.round(thanked / State.gifts.length * 100) + '%' : '—'),
+    statCard('Pending', String(State.gifts.length - thanked), 'to acknowledge')
+  );
+
+  const newBar = h('div', { class: 'panel' },
+    h('h3', {}, 'Log a gift'),
+    (() => {
+      const row = h('div', { style: { display: 'grid', gridTemplateColumns: '1.2fr 1.6fr auto', gap: '10px', alignItems: 'end' } });
+      const fromIn = h('input', { placeholder: 'From' });
+      const itemIn = h('input', { placeholder: 'Gift / amount' });
+      const submit = () => {
+        if (!fromIn.value.trim()) return;
+        State.gifts.unshift({ id: uid(), from: fromIn.value.trim(), item: itemIn.value, thanked: false, notes: '' });
+        saveState(); render();
+      };
+      for (const inp of [fromIn, itemIn]) inp.addEventListener('keydown', (e) => { if (e.key === 'Enter') submit(); });
+      row.append(
+        h('div', { class: 'field' }, h('label', {}, 'From'), fromIn),
+        h('div', { class: 'field' }, h('label', {}, 'Gift'), itemIn),
+        h('button', { class: 'action-btn', onClick: submit }, 'Add')
+      );
+      return row;
+    })()
+  );
+
+  const table = h('div', { class: 'panel' },
+    h('div', { class: 'panel-head' }, h('h3', {}, 'Gift log')),
+    State.gifts.length === 0
+      ? emptyState('No gifts logged yet', 'Record each gift and check off thank-you notes as you send them.')
+      : h('div', { class: 'table-wrap' },
+          h('table', {},
+            h('thead', {}, h('tr', {},
+              h('th', {}, 'From'),
+              h('th', {}, 'Gift'),
+              h('th', {}, 'Notes'),
+              h('th', {}, 'Thanked'),
+              h('th', {}, '')
+            )),
+            h('tbody', {}, ...State.gifts.map(giftRow))
+          )
+        )
+  );
+
+  return [sectionTitle('Gifts & Thank-Yous', 'A loving log of every gift',
+    'Keep track of who gave what, and check off thank-you notes as they go out.'),
+    stats, newBar, table];
+};
+
+function giftRow(g) {
+  const mk = (val, on) => {
+    const i = h('input', { value: val || '', placeholder: '—', style: { border: 'none', background: 'transparent', padding: '4px 6px', minHeight: 'auto' } });
+    i.addEventListener('input', (e) => { on(e.target.value); saveState(); });
+    return i;
+  };
+  const cb = h('input', { type: 'checkbox', class: 'task-check', checked: g.thanked });
+  cb.addEventListener('change', () => { g.thanked = cb.checked; saveState(); render(); });
+  return h('tr', {},
+    h('td', { class: 'name' }, mk(g.from, (v) => g.from = v)),
+    h('td', {}, mk(g.item, (v) => g.item = v)),
+    h('td', {}, mk(g.notes, (v) => g.notes = v)),
+    h('td', {}, cb),
+    h('td', {}, h('button', { class: 'icon-btn', onClick: () => {
+      State.gifts = State.gifts.filter(x => x.id !== g.id); saveState(); render();
+    }}, '×'))
+  );
+}
+</script>
+
+<script>
+/* ============================================================
+   ROUTE: HONEYMOON
+   ============================================================ */
+Routes.honeymoon = function () {
+  const h1 = State.honeymoon;
+  const done = h1.checklist.filter(c => c.done).length;
+
+  const infoPanel = h('div', { class: 'panel' },
+    h('h3', {}, 'Honeymoon details'),
+    formGrid([
+      { span: 6, label: 'Destination', value: h1.destination, placeholder: 'Lisbon · Amalfi · Kyoto…',
+        on: (v) => { h1.destination = v; saveState(); } },
+      { span: 6, label: 'Dates', value: h1.dates, placeholder: 'Sept 18 – Sept 26',
+        on: (v) => { h1.dates = v; saveState(); } },
+      { span: 6, label: 'Budget', value: h1.budget, placeholder: '$5,000',
+        on: (v) => { h1.budget = v; saveState(); } },
+      { span: 12, type: 'textarea', label: 'Notes', value: h1.notes,
+        placeholder: 'Flights, hotels, restaurant reservations, packing notes…',
+        on: (v) => { h1.notes = v; saveState(); } },
+    ])
+  );
+
+  const checklistPanel = h('div', { class: 'panel' },
+    h('div', { class: 'panel-head' },
+      h('h3', {}, 'Trip checklist'),
+      h('span', { class: 'eyebrow' }, done + ' / ' + h1.checklist.length + ' done')
+    ),
+    (() => {
+      const row = h('div', { style: { display: 'grid', gridTemplateColumns: '1fr auto', gap: '10px', alignItems: 'end', marginBottom: '14px' } });
+      const inp = h('input', { placeholder: 'Passport renewal, travel insurance, pet sitter\u2026' });
+      const add = () => { if (!inp.value.trim()) return;
+        h1.checklist.push({ id: uid(), title: inp.value.trim(), done: false });
+        inp.value = ''; saveState(); render();
+      };
+      inp.addEventListener('keydown', (e) => { if (e.key === 'Enter') add(); });
+      const field = h('div', { class: 'field' }, h('label', {}, 'Add task'), inp);
+      row.append(field, h('button', { class: 'action-btn', onClick: add }, 'Add'));
+      return row;
+    })(),
+    h1.checklist.length === 0
+      ? emptyState('Empty checklist', 'Start with passports, travel insurance, and an out-of-office.')
+      : h('div', {}, ...h1.checklist.map(c => {
+          const cb = h('input', { type: 'checkbox', class: 'task-check', checked: c.done });
+          cb.addEventListener('change', () => { c.done = cb.checked; saveState(); render(); });
+          return h('div', { class: 'task-row' + (c.done ? ' done' : '') },
+            cb,
+            h('div', { class: 'task-body' }, h('div', { class: 'task-title' }, c.title)),
+            h('button', { class: 'icon-btn', onClick: () => {
+              h1.checklist = h1.checklist.filter(x => x.id !== c.id); saveState(); render();
+            }}, '×')
+          );
+        }))
+  );
+
+  return [sectionTitle('Honeymoon', 'Plan the trip that comes after',
+    'Keep itinerary details, packing lists, and prep tasks beside your wedding plans.'),
+    h('div', { class: 'grid-2' }, infoPanel, checklistPanel)];
+};
+</script>
+
+<script>
+/* ============================================================
+   ROUTE: INVITATIONS
+   ============================================================ */
+Routes.invitations = function () {
+  if (!hasSection('invitations')) {
+    return h('div', { class: 'card-lock' },
+      h('div', { class: 'lock-icon' }, '🔒'),
+      h('div', { class: 'lock-title' }, 'Invitations'),
+      h('p', {}, 'Create custom wedding invitations. Upgrade to Premium to unlock.'),
+      h('button', { class: 'btn', onClick: () => navigate('pricing') }, 'See Plans')
+    );
+  }
+
+  const inv = State.invitations;
+
+  // Template styles
+  const templates = [
+    { id: 'classic', name: 'Classic', desc: 'Timeless elegance' },
+    { id: 'modern', name: 'Modern', desc: 'Clean & contemporary' },
+    { id: 'elegant', name: 'Elegant', desc: 'Ornate luxury' }
+  ];
+
+  const editorPanel = h('div', { class: 'panel' },
+    h('h3', {}, 'Invitation details'),
+    formGrid([
+      { span: 12, label: 'Template', value: inv.template,
+        type: 'select', options: templates.map(t => ({ value: t.id, label: t.name + ' — ' + t.desc })),
+        on: (v) => { inv.template = v; saveState(); render(); } },
+      { span: 6, label: 'Couple names', value: inv.couple, placeholder: 'Sarah & James',
+        on: (v) => { inv.couple = v; saveState(); } },
+      { span: 6, label: 'Wedding date', value: inv.date, placeholder: 'Saturday, June 15, 2024',
+        on: (v) => { inv.date = v; saveState(); } },
+      { span: 6, label: 'Time', value: inv.time, placeholder: '4:00 PM',
+        on: (v) => { inv.time = v; saveState(); } },
+      { span: 6, label: 'Location', value: inv.location, placeholder: 'The Grand Ballroom, NYC',
+        on: (v) => { inv.location = v; saveState(); } },
+      { span: 12, label: 'RSVP by date', value: inv.rvspByDate, placeholder: 'June 1, 2024',
+        on: (v) => { inv.rvspByDate = v; saveState(); } },
+      { span: 12, label: 'RSVP URL / contact', value: inv.url, placeholder: 'https://... or email: rsvp@example.com',
+        on: (v) => { inv.url = v; saveState(); } },
+      { span: 12, type: 'textarea', label: 'Additional details', value: inv.details,
+        placeholder: 'Dress code, reception details, dietary restrictions, directions…',
+        on: (v) => { inv.details = v; saveState(); } },
+    ]),
+    h('div', { style: { marginTop: '18px', display: 'flex', gap: '10px' } },
+      h('button', { class: 'btn', onClick: () => printInvitation(inv) }, '🖨 Print'),
+      h('button', { class: 'btn btn-outline', onClick: () => downloadInvitationHTML(inv) }, '⬇ Download HTML')
+    )
+  );
+
+  const previewPanel = h('div', { class: 'panel', style: { background: inv.template === 'elegant' ? '#faf6f1' : inv.template === 'modern' ? '#fafafa' : '#fbf7ef' } },
+    renderInvitationPreview(inv)
+  );
+
+  return [
+    sectionTitle('Invitations', 'Send personalized digital invites',
+      'Design a custom invitation that matches your style. Share digitally or print.'),
+    h('div', { class: 'grid-2' }, editorPanel, previewPanel)
+  ];
+};
+
+function renderInvitationPreview(inv) {
+  if (!inv.date || !inv.couple) {
+    return h('div', { style: { textAlign: 'center', padding: '60px 40px', color: '#8a7760' } },
+      h('div', { style: { fontSize: '3.5rem', marginBottom: '12px' } }, '💌'),
+      h('div', { style: { fontSize: '1.05rem', fontStyle: 'italic' } }, 'Fill in details to preview'));
+  }
+
+  const isClassic = inv.template === 'classic';
+  const isModern = inv.template === 'modern';
+  const isElegant = inv.template === 'elegant';
+
+  const accent = getComputedStyle(document.documentElement).getPropertyValue('--accent').trim();
+  const text = getComputedStyle(document.documentElement).getPropertyValue('--text').trim();
+
+  const content = h('div', {
+    style: {
+      padding: '48px 40px',
+      textAlign: 'center',
+      fontFamily: 'var(--serif)',
+      color: text
+    }
+  });
+
+  if (isElegant) {
+    content.append(
+      h('div', { style: { fontSize: '1.5rem', marginBottom: '20px', letterSpacing: '0.15em', textTransform: 'uppercase', color: accent } }, '◆'),
+      h('div', { style: { fontSize: '2.2rem', fontWeight: '600', marginBottom: '8px', lineHeight: '1.2' } }, inv.couple),
+      h('div', { style: { fontSize: '1rem', fontStyle: 'italic', marginBottom: '28px', color: '#8a7760' } }, 'request the honour of your presence'),
+      h('div', { style: { fontSize: '2.8rem', fontWeight: '300', marginTop: '24px', marginBottom: '24px', lineHeight: '1.3', color: accent } }, 'at the celebration of their marriage'),
+      h('div', { style: { fontSize: '1.15rem', marginTop: '28px', marginBottom: '8px' } }, inv.date),
+      inv.time ? h('div', { style: { fontSize: '1rem' } }, inv.time) : null,
+      inv.location ? h('div', { style: { fontSize: '1rem', marginTop: '12px' } }, inv.location) : null,
+      h('div', { style: { fontSize: '1.5rem', margin: '28px 0', color: accent } }, '◆'),
+      inv.rvspByDate ? h('div', { style: { fontSize: '0.9rem', marginTop: '16px' } }, 'RSVP by ' + inv.rvspByDate) : null,
+      inv.url ? h('div', { style: { fontSize: '0.9rem', marginTop: '8px', color: accent, textDecoration: 'underline' } }, inv.url) : null
+    );
+  } else if (isModern) {
+    content.append(
+      h('div', { style: { fontSize: '2.4rem', fontWeight: '600', marginBottom: '6px', letterSpacing: '-0.02em' } }, inv.couple),
+      h('div', { style: { fontSize: '0.95rem', letterSpacing: '0.1em', textTransform: 'uppercase', marginBottom: '24px', color: '#8a7760' } }, 'are getting married'),
+      h('div', { style: { fontSize: '1.4rem', fontWeight: '300', margin: '20px 0' } }, inv.date),
+      inv.time ? h('div', { style: { fontSize: '1rem', color: '#8a7760' } }, 'at ' + inv.time) : null,
+      inv.location ? h('div', { style: { fontSize: '1rem', color: '#8a7760', marginTop: '8px' } }, inv.location) : null,
+      h('div', { style: { height: '1px', background: accent, margin: '24px 0', width: '40%', marginLeft: 'auto', marginRight: 'auto' } }),
+      inv.rvspByDate ? h('div', { style: { fontSize: '0.85rem', marginTop: '16px', textTransform: 'uppercase', letterSpacing: '0.05em' } }, 'Reply by ' + inv.rvspByDate) : null,
+      inv.url ? h('div', { style: { fontSize: '0.9rem', marginTop: '8px', color: accent } }, inv.url) : null
+    );
+  } else {
+    // classic
+    content.append(
+      h('div', { style: { fontSize: '1.8rem', marginBottom: '12px' } }, '✨'),
+      h('div', { style: { fontSize: '2.2rem', fontWeight: '600', marginBottom: '20px', lineHeight: '1.2' } }, inv.couple),
+      h('div', { style: { fontSize: '1rem', marginBottom: '24px', color: '#8a7760' } }, 'together with their families\nrequest the pleasure of your company'),
+      h('div', { style: { fontSize: '1.3rem', fontWeight: '500', marginTop: '24px', marginBottom: '12px' } }, inv.date),
+      inv.time ? h('div', { style: { fontSize: '1rem' } }, inv.time) : null,
+      inv.location ? h('div', { style: { fontSize: '1rem', marginTop: '12px', color: '#8a7760' } }, inv.location) : null,
+      h('div', { style: { height: '1px', background: accent, margin: '24px auto', width: '30%' } }),
+      inv.rvspByDate ? h('div', { style: { fontSize: '0.9rem', marginTop: '16px' } }, 'RSVP by ' + inv.rvspByDate) : null,
+      inv.url ? h('div', { style: { fontSize: '0.9rem', marginTop: '8px', color: accent } }, inv.url) : null
+    );
+  }
+
+  return content;
+}
+
+function printInvitation(inv) {
+  const win = window.open('', 'invitation');
+  const html = `<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Invitation</title>
+<link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,wght@0,300;0,400;0,600;1,400&display=swap" rel="stylesheet">
+<style>
+  body { margin: 0; padding: 40px; font-family: 'Source Serif 4', Georgia, serif; background: #faf5ec; }
+  .invite { max-width: 600px; margin: 0 auto; background: white; padding: 60px 40px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+  h1 { font-size: 2.2rem; font-weight: 600; margin: 0 0 20px; text-align: center; }
+  .subtitle { text-align: center; color: #8a7760; margin-bottom: 24px; }
+  .details { text-align: center; margin: 24px 0; }
+  .divider { height: 1px; background: #C9A875; margin: 24px 0; width: 50%; margin-left: auto; margin-right: auto; }
+  .rsvp { text-align: center; margin-top: 24px; font-size: 0.95rem; }
+  @media print { body { background: white; } .invite { box-shadow: none; } }
+</style>
+</head>
+<body>
+<div class="invite">
+  <h1>${inv.couple || 'Names'}</h1>
+  <div class="subtitle">request the pleasure of your company</div>
+  <div class="details">
+    <div style="font-size: 1.3rem; font-weight: 500; margin: 20px 0;">${inv.date || 'Date'}</div>
+    ${inv.time ? '<div>' + inv.time + '</div>' : ''}
+    ${inv.location ? '<div style="color: #8a7760; margin-top: 12px;">' + inv.location + '</div>' : ''}
+  </div>
+  <div class="divider"></div>
+  ${inv.rvspByDate ? '<div class="rsvp">RSVP by ' + inv.rvspByDate + '</div>' : ''}
+  ${inv.url ? '<div class="rsvp">' + inv.url + '</div>' : ''}
+  ${inv.details ? '<div style="text-align: center; margin-top: 24px; font-size: 0.95rem; color: #8a7760; white-space: pre-line;">' + inv.details + '</div>' : ''}
+</div>
+</body>
+</html>`;
+  win.document.write(html);
+  win.document.close();
+  setTimeout(() => win.print(), 250);
+}
+
+function downloadInvitationHTML(inv) {
+  const html = `<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>${inv.couple || 'Wedding Invitation'}</title>
+<link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,wght@0,300;0,400;0,600;1,400&display=swap" rel="stylesheet">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: 'Source Serif 4', Georgia, serif; background: linear-gradient(135deg, #faf5ec 0%, #f0e8d6 100%); padding: 20px; }
+  .invite { max-width: 700px; margin: 0 auto; background: white; padding: 60px 40px; border-radius: 4px; box-shadow: 0 4px 12px rgba(0,0,0,0.15); }
+  h1 { font-size: 2.4rem; font-weight: 600; margin: 0 0 16px; text-align: center; color: #5c4230; line-height: 1.2; }
+  .subtitle { text-align: center; color: #8a7760; margin-bottom: 24px; font-size: 1.05rem; }
+  .details { text-align: center; margin: 28px 0; }
+  .date { font-size: 1.5rem; font-weight: 500; margin: 20px 0; color: #3d2e24; }
+  .time, .location { font-size: 1.1rem; color: #8a7760; margin-top: 8px; }
+  .divider { height: 1px; background: #C9A875; margin: 28px auto; width: 50%; }
+  .rsvp-section { text-align: center; margin-top: 24px; }
+  .rsvp-label { font-size: 0.9rem; text-transform: uppercase; letter-spacing: 0.05em; color: #8a7760; margin-bottom: 8px; }
+  .rsvp-text { font-size: 1rem; color: #C9A875; }
+  .details-text { margin-top: 24px; text-align: center; font-size: 0.95rem; color: #8a7760; white-space: pre-line; line-height: 1.6; }
+  @media print {
+    body { background: white; padding: 0; }
+    .invite { box-shadow: none; margin: 0; padding: 60px 40px; }
+  }
+</style>
+</head>
+<body>
+<div class="invite">
+  <h1>${inv.couple || 'Wedding Celebration'}</h1>
+  <div class="subtitle">request the pleasure of your company</div>
+  <div class="details">
+    <div class="date">${inv.date || 'Wedding Date'}</div>
+    ${inv.time ? '<div class="time">' + inv.time + '</div>' : ''}
+    ${inv.location ? '<div class="location">' + inv.location + '</div>' : ''}
+  </div>
+  <div class="divider"></div>
+  <div class="rsvp-section">
+    ${inv.rvspByDate ? '<div class="rsvp-label">RSVP by ' + inv.rvspByDate + '</div>' : ''}
+    ${inv.url ? '<div class="rsvp-text">' + inv.url + '</div>' : ''}
+  </div>
+  ${inv.details ? '<div class="details-text">' + inv.details + '</div>' : ''}
+</div>
+</body>
+</html>`;
+
+  const blob = new Blob([html], { type: 'text/html' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = (inv.couple || 'invitation').replace(/\s+/g, '_') + '.html';
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+  toast('Invitation downloaded');
+}
+</script>
+
+<script>
+/* ============================================================
+   ROUTE: INSPIRATION
+   ============================================================ */
+Routes.inspo = function () {
+  const addTile = h('div', { class: 'inspo-tile add', onClick: () => document.getElementById('inspo-file').click() },
+    h('div', {},
+      h('div', { class: 'add-ornament' }, '✚'),
+      h('div', { class: 'add-label' }, 'Add inspiration'),
+      h('div', { class: 'add-sub' }, 'Stored locally, never uploaded'))
+  );
+  const file = h('input', { id: 'inspo-file', type: 'file', accept: 'image/*', multiple: true, style: { display: 'none' } });
+  file.addEventListener('change', async (e) => {
+    const files = [...e.target.files];
+    for (const f of files) {
+      if (f.size > 2_500_000) {
+        toast('Image too large — skipped (' + f.name + ')'); continue;
+      }
+      const b64 = await new Promise((res) => {
+        const r = new FileReader();
+        r.onload = () => res(r.result); r.readAsDataURL(f);
+      });
+      State.inspo.unshift({ id: uid(), src: b64, caption: f.name.replace(/\.[^.]+$/, '') });
+    }
+    saveState(); render();
+    file.value = '';
+  });
+
+  const INSPO_SEEDS = [
+    { icon: '🌸', label: 'Florals', bg: 'linear-gradient(145deg,#fde8e8,#f5c6c0)' },
+    { icon: '🕯️', label: 'Table Setting', bg: 'linear-gradient(145deg,#fdf3dc,#f0dba8)' },
+    { icon: '🏛️', label: 'Venue', bg: 'linear-gradient(145deg,#e8eeea,#c8ddd0)' },
+    { icon: '👗', label: 'Bridal Style', bg: 'linear-gradient(145deg,#f5eef8,#dfc9ec)' },
+    { icon: '💍', label: 'Rings & Details', bg: 'linear-gradient(145deg,#faf0e0,#eddcb4)' },
+    { icon: '🌅', label: 'Colour Palette', bg: 'linear-gradient(145deg,#fce8dc,#f4c4a8)' },
+  ];
+
+  const tiles = State.inspo.map(item => {
+    const tile = h('div', { class: 'inspo-tile' },
+      h('img', { src: item.src, alt: item.caption || '' }),
+      h('div', { class: 'inspo-caption' }, item.caption || ''),
+      h('button', { class: 'inspo-del', onClick: (e) => {
+        e.stopPropagation();
+        if (confirm('Remove this image?')) {
+          State.inspo = State.inspo.filter(x => x.id !== item.id); saveState(); render();
+        }
+      }}, '×')
+    );
+    tile.addEventListener('click', () => {
+      const newCap = prompt('Caption', item.caption || '');
+      if (newCap != null) { item.caption = newCap; saveState(); render(); }
+    });
+    return tile;
+  });
+
+  const seedTiles = State.inspo.length === 0
+    ? INSPO_SEEDS.map(s => h('div', { class: 'inspo-tile seed', style: { background: s.bg } },
+        h('span', { class: 'seed-icon' }, s.icon),
+        h('span', { class: 'seed-label' }, s.label)
+      ))
+    : [];
+
+  const grid = h('div', { class: 'panel' },
+    h('div', { class: 'panel-head' },
+      h('h3', {}, 'Inspiration board'),
+      h('span', { class: 'eyebrow' }, State.inspo.length + ' images')
+    ),
+    h('div', { class: 'inspo-grid' }, addTile, ...tiles, ...seedTiles),
+    State.inspo.length === 0 ? h('p', { class: 'inspo-seed-hint' }, 'Replace these with your own photos — tap ✚ to start') : null,
+    file,
+    h('p', { class: 'muted small', style: { marginTop: '14px' } }, 'Images are stored in your browser\'s localStorage — keep each under ~2MB for best performance.')
+  );
+
+  return [sectionTitle('Inspiration', 'A quiet mood board',
+    'Collect the looks, textures, and moments you want to remember when choices feel overwhelming.'),
+    grid,
+    furtherReadingPanel()];
+};
+
+function furtherReadingPanel() {
+  const groups = [
+    {
+      title: 'Style & planning',
+      blurb: 'Editorial magazines for mood, palettes, and real-wedding reference.',
+      links: [
+        { name: 'Martha Stewart Weddings', url: 'https://www.marthastewart.com/weddings', note: 'Classic, timeless planning coverage.' },
+        { name: 'Brides', url: 'https://www.brides.com/', note: 'Trend reports, planning checklists, real weddings.' },
+        { name: 'The Knot', url: 'https://www.theknot.com/', note: 'Broad vendor directory + planning guides.' },
+        { name: 'Magnolia Rouge', url: 'https://magnoliarouge.com/', note: 'Editorial & fine-art real weddings.' },
+        { name: 'Once Wed', url: 'https://oncewed.com/', note: 'Curated minimalist editorial + DIY.' },
+      ],
+    },
+    {
+      title: 'Real weddings & venues',
+      blurb: 'Browse real couples, venues, and photography by style.',
+      links: [
+        { name: 'Style Me Pretty', url: 'https://www.stylemepretty.com/', note: 'Massive searchable archive by state & style.' },
+        { name: 'Green Wedding Shoes', url: 'https://greenweddingshoes.com/', note: 'Creative, boho-leaning real weddings.' },
+        { name: 'Junebug Weddings', url: 'https://junebugweddings.com/', note: 'International destination weddings.' },
+        { name: 'Over The Moon', url: 'https://overthemoon.com/', note: 'High-design, travel-oriented coverage.' },
+        { name: 'Vogue Weddings', url: 'https://www.vogue.com/tag/topic/weddings', note: 'Fashion-forward ceremony & bridal style.' },
+      ],
+    },
+    {
+      title: 'Budget, logistics & etiquette',
+      blurb: 'Practical reading for the spreadsheet side of the day.',
+      links: [
+        { name: 'A Practical Wedding', url: 'https://apracticalwedding.com/', note: 'Grounded planning, budget, and family advice.' },
+        { name: 'Offbeat Wed', url: 'https://offbeatwed.com/', note: 'Non-traditional ceremonies & inclusive planning.' },
+        { name: 'Emily Post \u00b7 Weddings', url: 'https://emilypost.com/advice/wedding-etiquette', note: 'Etiquette, invitations, seating.' },
+        { name: 'NerdWallet \u00b7 Wedding Budget', url: 'https://www.nerdwallet.com/article/finance/how-to-budget-for-a-wedding', note: 'Budget breakdowns & cost benchmarks.' },
+        { name: 'Zola Expert Advice', url: 'https://www.zola.com/expert-advice', note: 'Registry, timing, and RSVP guides.' },
+      ],
+    },
+  ];
+
+  const panel = h('div', { class: 'panel' },
+    h('div', { class: 'panel-head' },
+      h('h3', {}, 'Further reading'),
+      h('span', { class: 'eyebrow' }, 'Trusted wedding publications')
+    ),
+    h('p', { class: 'muted small', style: { marginTop: '-4px', marginBottom: '18px', maxWidth: '62ch' } },
+      'Outside voices for when you need a second opinion \u2014 editorials for style, archives for venue & photography reference, and practical columns for the logistics. All links open in a new tab.'
+    )
+  );
+
+  for (const g of groups) {
+    panel.append(
+      h('div', { style: { marginBottom: '20px' } },
+        h('div', { style: { display: 'flex', alignItems: 'baseline', gap: '12px', marginBottom: '4px', flexWrap: 'wrap' } },
+          h('div', { style: { fontFamily: 'var(--font-serif)', fontSize: '18px', color: 'var(--heading)' } }, g.title),
+          h('span', { class: 'muted small' }, g.blurb)
+        ),
+        (() => {
+          const list = h('div', { style: { display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(240px, 1fr))', gap: '10px', marginTop: '10px' } });
+          for (const link of g.links) {
+            list.append(h('a', {
+              href: link.url, target: '_blank', rel: 'noopener noreferrer',
+              style: {
+                display: 'block', padding: '12px 14px', borderRadius: '14px',
+                border: '1px solid var(--border)', background: 'var(--bg)',
+                textDecoration: 'none', color: 'var(--text)', transition: 'border-color .15s ease, transform .15s ease',
+              },
+              onMouseEnter: (e) => { e.currentTarget.style.borderColor = 'var(--accent-dark)'; e.currentTarget.style.transform = 'translateY(-1px)'; },
+              onMouseLeave: (e) => { e.currentTarget.style.borderColor = 'var(--border)'; e.currentTarget.style.transform = 'translateY(0)'; },
+            },
+              h('div', { style: { display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '8px' } },
+                h('span', { style: { fontWeight: '600', color: 'var(--heading)' } }, link.name),
+                h('span', { class: 'muted small', style: { fontSize: '11px' } }, '\u2197')
+              ),
+              h('div', { class: 'muted small', style: { marginTop: '4px' } }, link.note)
+            ));
+          }
+          return list;
+        })()
+      )
+    );
+  }
+
+  panel.append(
+    h('p', { class: 'muted small', style: { marginTop: '4px', fontStyle: 'italic' } },
+      'Wedding HQ Studio is independent and not affiliated with any publication listed above.'
+    )
+  );
+
+  return panel;
+}
+</script>
+
+<script>
+/* ============================================================
+   ROUTE: PHOTOS — organized wedding photo albums
+   ============================================================ */
+Routes.photos = function () {
+  const ALBUMS = ['Engagement', 'Pre-wedding', 'Ceremony', 'Reception', 'Portraits', 'Candid', 'Honeymoon', 'Other'];
+  State.ui._photoAlbum = State.ui._photoAlbum || 'All';
+
+  // album pills
+  const counts = { All: State.photos.length };
+  for (const a of ALBUMS) counts[a] = State.photos.filter(p => (p.album || 'Other') === a).length;
+
+  const pillRow = h('div', { style: { display: 'flex', gap: '8px', flexWrap: 'wrap', marginBottom: '16px' } });
+  const pill = (label, active) => h('button', {
+    class: active ? 'action-btn' : 'ghost-btn',
+    style: { padding: '8px 14px', fontSize: '13px', borderRadius: '999px' },
+    onClick: () => { State.ui._photoAlbum = label; saveState(); render(); }
+  }, label + (counts[label] ? '  ·  ' + counts[label] : ''));
+  pillRow.append(pill('All', State.ui._photoAlbum === 'All'));
+  for (const a of ALBUMS) pillRow.append(pill(a, State.ui._photoAlbum === a));
+
+  // add tile
+  const fileInput = h('input', { id: 'photos-file', type: 'file', accept: 'image/*', multiple: true, style: { display: 'none' } });
+  fileInput.addEventListener('change', async (e) => {
+    const files = [...e.target.files];
+    const targetAlbum = State.ui._photoAlbum === 'All' ? 'Other' : State.ui._photoAlbum;
+    let added = 0;
+    for (const f of files) {
+      if (f.size > 3_000_000) { toast('Too large — skipped ' + f.name); continue; }
+      const b64 = await new Promise((res) => {
+        const r = new FileReader(); r.onload = () => res(r.result); r.readAsDataURL(f);
+      });
+      State.photos.unshift({
+        id: uid(), src: b64,
+        caption: f.name.replace(/\.[^.]+$/, ''),
+        album: targetAlbum,
+        date: new Date().toISOString().slice(0, 10)
+      });
+      added++;
+    }
+    if (added) { saveState(); render(); toast(added + ' photo' + (added === 1 ? '' : 's') + ' added to ' + targetAlbum); }
+    fileInput.value = '';
+  });
+
+  const addTile = h('div', { class: 'inspo-tile add', onClick: () => fileInput.click() },
+    h('div', {},
+      h('div', { class: 'add-ornament' }, '✚'),
+      h('div', { class: 'add-label' }, 'Add photos'),
+      h('div', { class: 'add-sub' },
+        State.ui._photoAlbum === 'All' ? 'Files land in “Other”' : 'Adds to ' + State.ui._photoAlbum)
+    )
+  );
+
+  // filtered tiles
+  const visible = State.ui._photoAlbum === 'All'
+    ? State.photos
+    : State.photos.filter(p => (p.album || 'Other') === State.ui._photoAlbum);
+
+  const tiles = visible.map(p => {
+    const tile = h('div', { class: 'inspo-tile' },
+      h('img', { src: p.src, alt: p.caption || '' }),
+      h('div', { class: 'inspo-caption' },
+        h('div', { style: { fontWeight: 600 } }, p.caption || 'Untitled'),
+        h('div', { style: { fontSize: '10px', opacity: .85, marginTop: '2px' } }, (p.album || 'Other') + (p.date ? '  ·  ' + p.date : ''))
+      ),
+      h('button', { class: 'inspo-del', onClick: (e) => {
+        e.stopPropagation();
+        if (confirm('Remove this photo?')) {
+          State.photos = State.photos.filter(x => x.id !== p.id); saveState(); render();
+        }
+      }}, '\u00d7')
+    );
+    tile.addEventListener('click', () => {
+      const newCap = prompt('Caption', p.caption || '');
+      if (newCap == null) return;
+      p.caption = newCap;
+      const newAlbum = prompt('Album (' + ALBUMS.join(', ') + ')', p.album || 'Other');
+      if (newAlbum != null && newAlbum.trim()) p.album = newAlbum.trim();
+      saveState(); render();
+    });
+    return tile;
+  });
+
+  const panel = h('div', { class: 'panel' },
+    h('div', { class: 'panel-head' },
+      h('h3', {}, State.ui._photoAlbum === 'All' ? 'All photos' : State.ui._photoAlbum),
+      h('span', { class: 'eyebrow' },
+        (State.ui._photoAlbum === 'All' ? State.photos.length : visible.length) + ' photo' +
+        ((State.ui._photoAlbum === 'All' ? State.photos.length : visible.length) === 1 ? '' : 's'))
+    ),
+    pillRow,
+    visible.length === 0 && State.photos.length === 0
+      ? h('div', { style: { marginTop: '8px' } }, emptyState('No photos yet',
+          'Upload engagement shoots, getting-ready candids, ceremony moments, and reception highlights. Everything is stored locally \u2014 nothing leaves your device.'))
+      : h('div', { class: 'inspo-grid' }, addTile, ...tiles),
+    fileInput,
+    h('p', { class: 'muted small', style: { marginTop: '14px' } },
+      'Photos are stored in your browser\u2019s localStorage. Keep individual files under ~3MB and export your planner periodically to back them up.')
+  );
+
+  return [
+    sectionTitle('Photos', 'An organized home for every shot',
+      'Group engagement, ceremony, reception, portrait, candid, and honeymoon photos into albums \u2014 so you always know where to find a specific moment.'),
+    panel
+  ];
+};
+</script>
+
+<script>
+/* ============================================================
+   ROUTE: JOURNAL — post-wedding & first-year memory keeper
+   ============================================================ */
+Routes.journal = function () {
+  const MOODS = ['\u2022 Grateful', '\u2022 Joyful', '\u2022 Reflective', '\u2022 Tender', '\u2022 Overwhelmed', '\u2022 Peaceful'];
+  const PROMPTS = [
+    'What I want to remember about today\u2026',
+    'A small thing that made us laugh this week\u2026',
+    'Something I learned about us as a couple\u2026',
+    'A moment from the wedding I keep replaying\u2026',
+    'What home has felt like lately\u2026',
+    'A tradition we\u2019re starting this year\u2026',
+    'Something I\u2019m grateful my partner did\u2026',
+    'A hope for the next year of our life together\u2026',
+  ];
+
+  const entries = State.journal.entries.slice().sort((a, b) => (b.date || '').localeCompare(a.date || ''));
+
+  // New-entry form
+  const draftDate = h('input', { type: 'date', id: 'journal-date' });
+  draftDate.value = new Date().toISOString().slice(0, 10);
+  const draftTitle = h('input', { id: 'journal-title', placeholder: 'A title for this entry (optional)' });
+  const draftMood  = h('select', { id: 'journal-mood' },
+    h('option', { value: '' }, 'Mood (optional)'),
+    ...MOODS.map(m => h('option', { value: m }, m))
+  );
+  const prompt = PROMPTS[Math.floor(Math.random() * PROMPTS.length)];
+  const draftBody  = h('textarea', { id: 'journal-body', rows: 6, placeholder: prompt });
+
+  const submit = () => {
+    if (!draftBody.value.trim() && !draftTitle.value.trim()) { toast('Write something first'); return; }
+    State.journal.entries.unshift({
+      id: uid(),
+      date: draftDate.value || new Date().toISOString().slice(0, 10),
+      title: draftTitle.value.trim(),
+      body: draftBody.value.trim(),
+      mood: draftMood.value,
+    });
+    saveState(); render();
+    toast('Entry saved');
+  };
+
+  const form = h('div', { class: 'panel' },
+    h('h3', {}, 'New entry'),
+    h('p', { class: 'muted small', style: { marginTop: '-4px', marginBottom: '14px' } },
+      'A quiet space for the year after. Start with today, a small moment, or the prompt below.'),
+    h('div', { class: 'form-grid' },
+      h('div', { class: 'field span-4' }, h('label', {}, 'Date'), draftDate),
+      h('div', { class: 'field span-8' }, h('label', {}, 'Title'), draftTitle),
+      h('div', { class: 'field span-4' }, h('label', {}, 'Mood'), draftMood),
+      h('div', { class: 'field span-12' }, h('label', {}, 'Entry'), draftBody),
+    ),
+    h('div', { style: { display: 'flex', gap: '10px', marginTop: '12px' } },
+      h('button', { class: 'action-btn', onClick: submit }, 'Save entry'),
+      h('span', { class: 'muted small', style: { alignSelf: 'center' } }, 'Prompt: \u201c' + prompt + '\u201d')
+    )
+  );
+
+  // Stats
+  const total = entries.length;
+  const uniqueDates = new Set(entries.map(e => e.date)).size;
+  const latest = entries[0]?.date ? fmtJournalDate(entries[0].date) : '\u2014';
+  const statsPanel = h('div', { class: 'grid-3', style: { marginBottom: '18px' } },
+    statCard('Entries', String(total), total === 0 ? 'Start today' : 'Saved locally', 'plum'),
+    statCard('Days written', String(uniqueDates), uniqueDates === 0 ? '\u2014' : 'Unique days', 'sage'),
+    statCard('Latest', latest, entries[0]?.title ? '\u201c' + entries[0].title + '\u201d' : '', 'champagne'),
+  );
+
+  // Entry list
+  const list = h('div', { class: 'panel' },
+    h('div', { class: 'panel-head' },
+      h('h3', {}, 'Your journal'),
+      h('span', { class: 'eyebrow' }, total + ' entr' + (total === 1 ? 'y' : 'ies'))
+    ),
+    entries.length === 0
+      ? emptyState('Nothing here yet', 'Write your first entry on the left. Even a sentence counts.')
+      : h('div', {}, ...entries.map(entry => {
+          const card = h('article', {
+            style: {
+              borderTop: '1px solid var(--border)', padding: '18px 4px 22px',
+              display: 'grid', gridTemplateColumns: '120px 1fr auto', gap: '18px', alignItems: 'start'
+            }
+          },
+            h('div', { style: { color: 'var(--muted)', fontFamily: 'var(--font-serif)', fontSize: '14px', letterSpacing: '.02em' } },
+              fmtJournalDate(entry.date),
+              entry.mood ? h('div', { style: { marginTop: '6px', fontSize: '12px' } }, entry.mood) : null
+            ),
+            h('div', {},
+              entry.title ? h('div', {
+                style: { fontFamily: 'var(--font-serif)', fontSize: '20px', color: 'var(--heading)', lineHeight: '1.25', marginBottom: '6px' }
+              }, entry.title) : null,
+              h('div', { style: { whiteSpace: 'pre-wrap', lineHeight: '1.65', color: 'var(--text)' } }, entry.body || h('span', { class: 'muted' }, '(no body)'))
+            ),
+            h('button', { class: 'icon-btn', title: 'Delete',
+              onClick: () => {
+                if (!confirm('Delete this entry?')) return;
+                State.journal.entries = State.journal.entries.filter(x => x.id !== entry.id);
+                saveState(); render();
+              }
+            }, '\u00d7')
+          );
+          return card;
+        }))
+  );
+
+  return [
+    sectionTitle('Journal', 'A post-wedding & first-year memory keeper',
+      'A quiet place for the year after the day \u2014 a sentence, a photograph of a Tuesday, a moment you want to remember.'),
+    statsPanel,
+    h('div', { class: 'grid-2' }, form, list)
+  ];
+};
+
+function fmtJournalDate(iso) {
+  if (!iso) return '\u2014';
+  try {
+    const d = new Date(iso + 'T00:00:00');
+    return d.toLocaleDateString(undefined, { weekday: 'short', month: 'short', day: 'numeric', year: 'numeric' });
+  } catch (e) { return iso; }
+}
+</script>
+
+<script>
+/* ============================================================
+   ROUTE: NOTES
+   ============================================================ */
+Routes.notes = function () {
+  const panel = h('div', { class: 'panel' },
+    h('h3', {}, 'Planner notes'),
+    h('p', { class: 'muted small', style: { marginBottom: '14px' } }, 'A catch-all notebook — thoughts, reminders, questions, anything that doesn\'t fit elsewhere.'),
+    (() => {
+      const ta = h('textarea', { class: 'note-area', style: { minHeight: '380px' },
+        placeholder: 'Scribble anything here — venue questions, caterer tasting notes, vows drafts, thank-you wording ideas…' });
+      ta.value = State.notes;
+      ta.addEventListener('input', () => { State.notes = ta.value; saveState(); });
+      return ta;
+    })()
+  );
+  return [sectionTitle('Notes', 'A quiet notebook',
+    'Everything that doesn\'t fit anywhere else. Auto-saved.'), panel];
+};
+</script>
+
+<script>
+/* ============================================================
+   ROUTE: PRICING / UPGRADE
+   ============================================================ */
+Routes.pricing = function () {
+  const lockedFrom = State.ui._lockedFrom;
+  const lockedLabel = lockedFrom ? (NAV.find(n => n.id === lockedFrom)?.label || lockedFrom) : null;
+  const tierOrder = ['lite', 'standard', 'premium'];
+  const currentIdx = tierOrder.indexOf(State.ui.tier);
+
+  const tierFeatures = {
+    lite: [
+      'Dashboard — countdown & live stats',
+      'Vision — style keywords, mood tags, priorities',
+      'Organized — full task checklist with due dates',
+      'Vendors — quotes, status, payment tracking',
+      'Budget — planned vs. actual by category',
+      'Timeline — planning milestones',
+      'Guests — RSVPs, dietary notes, seating',
+      'Inspiration — local mood board',
+      'Notes — private catch-all notebook',
+    ],
+    standard: [
+      'Everything in Lite',
+      'Day-Of — hour-by-hour run sheet',
+      'Gifts — gift log & thank-you tracking',
+      'Honeymoon — itinerary & trip checklist',
+      'Photos — organized albums (Ceremony, Reception…)',
+      'Vow book & guest book templates',
+    ],
+    premium: [
+      'Everything in Standard',
+      'Journal — post-wedding & first-year memory keeper',
+      'All 4 color palettes — Blush, Navy, Terracotta',
+      'Matching digital invitation suite',
+      'Priority support & seasonal updates',
+      'First access to every new section',
+    ],
+  };
+  const tierNotIncluded = {
+    lite:     ['Day-Of run sheet', 'Gifts & thank-yous', 'Honeymoon planner', 'Photo albums', 'Post-wedding journal', 'All 4 palettes'],
+    standard: ['Post-wedding journal', 'All 4 palettes', 'Digital invitation suite'],
+    premium:  [],
+  };
+
+  function tierCard(tier) {
+    const isCurrent = tier.id === State.ui.tier;
+    const tierIdx   = tierOrder.indexOf(tier.id);
+    const isUpgrade = tierIdx > currentIdx;
+    const featured  = tier.id === 'standard';
+
+    const card = h('div', { class: 'tier-card' + (isCurrent ? ' current' : '') + (featured && !isCurrent ? ' featured' : '') });
+
+    /* badge */
+    if (isCurrent)      card.append(h('span', { class: 'tier-badge' }, '✓ Your plan'));
+    else if (featured)  card.append(h('span', { class: 'tier-badge' }, 'Most popular'));
+    else if (!isUpgrade) card.append(h('span', { class: 'tier-badge', style: { background: 'var(--border)', color: 'var(--muted)' } }, 'Basic'));
+
+    card.append(
+      h('span', { class: 'eyebrow' }, tier.name),
+      h('div', { class: 'tier-name' }, 'Wedding HQ ' + tier.name),
+      h('p', { class: 'muted small', style: { margin: 0 } }, tier.tagline),
+      h('div', { class: 'tier-price' }, '$' + tier.price,
+        h('span', { class: 'once' }, 'one-time · no subscription')),
+    );
+
+    const list = h('ul', { class: 'tier-includes' });
+    for (const f of tierFeatures[tier.id]) list.append(h('li', {}, f));
+    for (const f of (tierNotIncluded[tier.id] || [])) list.append(h('li', { class: 'off' }, f));
+    card.append(list);
+
+    /* CTA button */
+    let btn;
+    if (isCurrent) {
+      btn = h('button', { class: 'ghost-btn', disabled: true,
+        style: { marginTop: 'auto', cursor: 'default', opacity: '.55' } }, '✓ You own this');
+    } else if (!isUpgrade) {
+      /* lower tier — already included in their plan */
+      btn = h('button', { class: 'ghost-btn', disabled: true,
+        style: { marginTop: 'auto', cursor: 'default', opacity: '.55' } }, '✓ Included in your plan');
+    } else if (PRODUCT_TIER) {
+      /* locked file — link out to Etsy for upgrades only */
+      btn = h('a', {
+        href: ETSY_URLS[tier.id] || '#', target: '_blank', rel: 'noopener noreferrer',
+        class: 'action-btn',
+        style: { marginTop: 'auto', textDecoration: 'none', textAlign: 'center' }
+      }, 'Buy on Etsy \u2197');
+    } else {
+      /* demo mode — in-app switch */
+      btn = h('button', { class: isUpgrade ? 'action-btn' : 'ghost-btn',
+        style: { marginTop: 'auto' },
+        onClick: () => switchTier(tier.id)
+      }, isUpgrade ? 'Upgrade to ' + tier.name : 'Switch to ' + tier.name);
+    }
+    card.append(btn);
+    return card;
+  }
+
+  /* locked-section banner */
+  const banner = lockedLabel ? h('div', { class: 'panel', style: { borderColor: 'var(--accent-dark)' } },
+    h('span', { class: 'eyebrow', style: { background: 'var(--accent-dark)', color: '#fff' } }, 'Locked section'),
+    h('h3', { style: { marginTop: '10px' } }, lockedLabel + ' is part of a higher tier'),
+    h('p', { class: 'muted', style: { maxWidth: '56ch' } },
+      'Your current plan is ' + currentTier().name + '. Upgrade below to unlock ' + lockedLabel
+      + ' — your existing data is never touched.')
+  ) : null;
+
+  /* guarantee strip */
+  const guaranteeItems = [
+    ['🔒', 'Private by design', 'All data stays in your browser. Nothing is uploaded.'],
+    ['♾️', 'Works offline forever', 'No internet required after the first load.'],
+    ['↗', 'One-time purchase', 'No subscription, no recurring fees, ever.'],
+    ['⬆', 'Data carries over', 'Upgrade any time — nothing is lost.'],
+  ];
+  const guarantee = h('div', { class: 'panel' },
+    h('div', { style: { display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '20px' } },
+      ...guaranteeItems.map(([icon, title, desc]) =>
+        h('div', { style: { display: 'flex', gap: '12px', alignItems: 'flex-start' } },
+          h('span', { style: { fontSize: '20px', lineHeight: '1', flexShrink: 0, marginTop: '2px' } }, icon),
+          h('div', {},
+            h('div', { style: { fontWeight: 600, color: 'var(--heading)', marginBottom: '3px' } }, title),
+            h('div', { class: 'muted small' }, desc)
+          )
+        )
+      )
+    )
+  );
+
+  const footer = h('div', { class: 'panel', style: { textAlign: 'center' } },
+    h('p', { class: 'muted small', style: { maxWidth: '56ch', margin: '0 auto' } },
+      'Wedding HQ Studio is sold by ProductiveMind.AI on Etsy as an instant digital download. '
+      + 'Questions? Message the shop — we reply within 24 hours.'
+    ),
+    PRODUCT_TIER ? h('a', {
+        href: 'https://productivemindai.etsy.com', target: '_blank', rel: 'noopener noreferrer',
+        style: { display: 'inline-block', marginTop: '10px', color: 'var(--accent-dark)', fontWeight: 600, fontSize: '13px' }
+      }, 'Visit the Etsy shop \u2197') : null
+  );
+
+  return [
+    sectionTitle('Plans', 'The right planner for where you are',
+      'One-time purchase. No subscription. Your data is yours — it never leaves your device.'),
+    banner,
+    h('div', { class: 'tier-grid' }, tierCard(TIERS.lite), tierCard(TIERS.standard), tierCard(TIERS.premium)),
+    guarantee,
+    footer,
+  ];
+};
+
+function switchTier(id) {
+  if (PRODUCT_TIER) { /* locked distribution file — direct to Etsy */
+    if (ETSY_URLS[id]) window.open(ETSY_URLS[id], '_blank', 'noopener');
+    return;
+  }
+  const prev = State.ui.tier;
+  State.ui.tier = id;
+  if (!hasPalette(State.ui.palette)) State.ui.palette = 'editorial';
+  saveState(); applyUI();
+  if (prev !== id) toast('Tier set to ' + TIERS[id].name);
+  render();
+}
+
+/* ============================================================
+   SETTINGS — palette swatches, dark mode, import/export, reset
+   ============================================================ */
+const PALETTES = [
+  { id: 'editorial', name: 'Editorial', dots: ['#F8F5F0','#A8B5A0','#5C4638'] },
+  { id: 'blush',     name: 'Soft Blush', dots: ['#FAF4F4','#E8A9B8','#6B4A4A'] },
+  { id: 'navy',      name: 'Modern Navy', dots: ['#F4F7FA','#4A6A9C','#1F2E4A'] },
+  { id: 'terra',     name: 'Warm Terracotta', dots: ['#FAF6F0','#C68A5E','#6B4F3A'] },
+];
+
+function applyUI() {
+  // If current palette isn't in tier, fall back to editorial
+  if (!hasPalette(State.ui.palette)) State.ui.palette = 'editorial';
+  if (State.ui.palette && State.ui.palette !== 'editorial') {
+    document.documentElement.setAttribute('data-palette', State.ui.palette);
+  } else {
+    document.documentElement.removeAttribute('data-palette');
+  }
+  document.documentElement.classList.toggle('dark', !!State.ui.dark);
+}
+
+function buildPaletteGrid() {
+  // tier segment
+  const seg = document.getElementById('tier-seg');
+  if (seg) seg.querySelectorAll('button').forEach(b => {
+    b.classList.toggle('on', b.dataset.val === State.ui.tier);
+  });
+  const grid = document.getElementById('palette-grid');
+  grid.innerHTML = '';
+  for (const p of PALETTES) {
+    const locked = !hasPalette(p.id);
+    const sw = h('button', {
+      class: 'palette-swatch' + (State.ui.palette === p.id ? ' active' : '') + (locked ? ' locked' : ''),
+      title: locked ? 'Unlock with Premium' : p.name,
+      onClick: () => {
+        if (locked) { closeSettings(); navigate('pricing'); toast('Unlock all palettes with Premium'); return; }
+        State.ui.palette = p.id; saveState(); applyUI(); buildPaletteGrid();
+      } },
+      h('div', { class: 'dots' }, ...p.dots.map(d => h('i', { style: { background: d } }))),
+      locked ? h('span', { class: 'palette-lock' }, 'Premium') : null,
+      h('div', { class: 'palette-name' }, p.name)
+    );
+    grid.append(sw);
+  }
+  // dark seg
+  document.querySelectorAll('#dark-seg button').forEach(b => {
+    b.classList.toggle('on', (b.dataset.val === 'dark') === !!State.ui.dark);
+  });
+}
+
+function openSettings() { document.getElementById('settings-modal').classList.add('open'); buildPaletteGrid(); }
+function closeSettings() { document.getElementById('settings-modal').classList.remove('open'); }
+
+/* Wiring */
+document.getElementById('fab-settings').onclick = openSettings;
+document.getElementById('btn-settings-side').onclick = openSettings;
+document.getElementById('modal-close').onclick = closeSettings;
+document.getElementById('settings-modal').addEventListener('click', (e) => {
+  if (e.target.id === 'settings-modal') closeSettings();
+});
+document.querySelectorAll('#dark-seg button').forEach(b => {
+  b.onclick = () => {
+    State.ui.dark = b.dataset.val === 'dark';
+    saveState(); applyUI(); buildPaletteGrid();
+  };
+});
+document.querySelectorAll('#tier-seg button').forEach(b => {
+  b.onclick = () => { switchTier(b.dataset.val); buildPaletteGrid(); };
+});
+
+document.getElementById('btn-export').onclick = () => {
+  const blob = new Blob([JSON.stringify(State, null, 2)], { type: 'application/json' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  const date = new Date().toISOString().slice(0, 10);
+  a.href = url; a.download = `wedding-hq-backup-${date}.json`;
+  a.click();
+  URL.revokeObjectURL(url);
+  toast('Backup exported');
+};
+document.getElementById('btn-import').onclick = () => document.getElementById('import-file').click();
+document.getElementById('import-file').onchange = async (e) => {
+  const f = e.target.files?.[0]; if (!f) return;
+  try {
+    const text = await f.text();
+    const parsed = JSON.parse(text);
+    if (typeof parsed !== 'object') throw new Error('Invalid backup');
+    if (confirm('Replace your current planner data with the imported backup?')) {
+      const merged = deepMerge(structuredClone(DEFAULT_STATE), parsed);
+      Object.keys(State).forEach(k => delete State[k]);
+      Object.assign(State, merged);
+      saveState(); applyUI(); closeSettings(); render();
+      toast('Backup imported');
+    }
+  } catch (err) {
+    alert('Could not read that file — not a valid Wedding HQ backup.');
+  }
+  e.target.value = '';
+};
+document.getElementById('btn-print').onclick = () => window.print();
+document.getElementById('btn-print-side').onclick = () => window.print();
+document.getElementById('btn-reset').onclick = () => {
+  if (confirm('Delete ALL planner data? This cannot be undone.') &&
+      confirm('Really delete everything? Consider exporting a backup first.')) {
+    localStorage.removeItem(STORAGE_KEY);
+    Object.keys(State).forEach(k => delete State[k]);
+    Object.assign(State, structuredClone(DEFAULT_STATE));
+    saveState(); applyUI(); closeSettings(); showWelcome(); render();
+    toast('Planner reset');
+  }
+};
+
+/* ============================================================
+   WELCOME / FIRST RUN
+   ============================================================ */
+function showWelcome() {
+  document.getElementById('welcome').classList.add('open');
+  document.getElementById('w-names').value = State.couple.names || '';
+  document.getElementById('w-date').value  = State.couple.date || '';
+  document.getElementById('w-loc').value   = State.couple.location || '';
+}
+function hideWelcome() {
+  document.getElementById('welcome').classList.remove('open');
+}
+document.getElementById('w-start').onclick = () => {
+  State.couple.names = document.getElementById('w-names').value.trim();
+  State.couple.date  = document.getElementById('w-date').value;
+  State.couple.location = document.getElementById('w-loc').value.trim();
+  State.ui.firstRun = false; saveState(); hideWelcome(); render();
+  toast('Welcome — your planner is ready');
+};
+document.getElementById('w-later').onclick = () => {
+  State.ui.firstRun = false; saveState(); hideWelcome();
+};
+
+/* ============================================================
+   BOOT
+   ============================================================ */
+applyUI();
+render();
+if (State.ui.firstRun) showWelcome();
+
+/* Hide tier switcher in locked distribution builds */
+if (PRODUCT_TIER) {
+  const tierRow = document.getElementById('tier-seg')?.closest('.modal-row');
+  if (tierRow) tierRow.style.display = 'none';
+}
+
+/* Keyboard: Esc closes settings */
+window.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape') closeSettings();
+});
+
+/* Warn on storage quota issues */
+window.addEventListener('storage', () => {
+  // cross-tab: reload state
+  const fresh = loadState();
+  Object.keys(State).forEach(k => delete State[k]);
+  Object.assign(State, fresh); applyUI(); render();
+});
+</script>
+</body>
+</html>

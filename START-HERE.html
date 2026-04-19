@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Wedding HQ Studio — Start Here</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,wght@0,300;0,400;0,600;1,400&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --bg: #FAF5EC;
+    --bg2: #F0E8D6;
+    --border: #E4D9C2;
+    --text: #3D2E24;
+    --heading: #5C4230;
+    --muted: #8A7760;
+    --accent: #C9A875;
+    --accent-dark: #A88A54;
+    --serif: 'Source Serif 4', Georgia, serif;
+  }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--serif);
+    line-height: 1.7;
+    padding: 0 1rem 4rem;
+  }
+  .hero {
+    max-width: 680px;
+    margin: 0 auto;
+    padding: 4rem 0 2rem;
+    text-align: center;
+  }
+  .monogram {
+    width: 72px; height: 72px;
+    background: var(--accent);
+    border-radius: 50%;
+    display: inline-flex; align-items: center; justify-content: center;
+    font-size: 2rem; color: #fff; margin-bottom: 1.5rem;
+  }
+  h1 { font-size: 2.2rem; font-weight: 600; color: var(--heading); letter-spacing: -0.02em; line-height: 1.2; }
+  .tagline { margin-top: .6rem; color: var(--muted); font-style: italic; font-size: 1.05rem; }
+  .divider {
+    display: flex; align-items: center; gap: 1rem;
+    max-width: 680px; margin: 2.5rem auto;
+    color: var(--accent); font-size: .75rem; letter-spacing: .1em; text-transform: uppercase;
+  }
+  .divider::before, .divider::after { content:''; flex:1; height:1px; background: var(--border); }
+  .card-grid {
+    max-width: 680px; margin: 0 auto;
+    display: grid; gap: 1.25rem;
+  }
+  .card {
+    background: #fff;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 1.5rem 1.75rem;
+  }
+  .step-num {
+    display: inline-flex; align-items: center; justify-content: center;
+    width: 32px; height: 32px; border-radius: 50%;
+    background: var(--accent); color: #fff;
+    font-size: .85rem; font-weight: 600;
+    margin-bottom: .75rem;
+  }
+  .card h2 { font-size: 1.1rem; font-weight: 600; color: var(--heading); margin-bottom: .4rem; }
+  .card p { color: var(--muted); font-size: .95rem; }
+  .card code {
+    display: inline-block; background: var(--bg2); border: 1px solid var(--border);
+    border-radius: 4px; padding: .1em .45em; font-family: monospace; font-size: .85em;
+    color: var(--heading);
+  }
+  .open-btn {
+    display: block; width: fit-content;
+    margin: 2rem auto 0;
+    background: var(--accent); color: #fff;
+    text-decoration: none; font-family: var(--serif);
+    font-size: 1rem; font-weight: 600;
+    padding: .75rem 2.25rem; border-radius: 8px;
+    transition: background .2s;
+  }
+  .open-btn:hover { background: var(--accent-dark); }
+  .faq { max-width: 680px; margin: 3rem auto 0; }
+  .faq h2 { font-size: 1.3rem; color: var(--heading); margin-bottom: 1rem; }
+  details { border-bottom: 1px solid var(--border); }
+  details + details { margin-top: 0; }
+  summary {
+    padding: .9rem 0; cursor: pointer; font-size: .975rem;
+    color: var(--text); list-style: none; display: flex; justify-content: space-between;
+  }
+  summary::after { content: '+'; color: var(--accent); font-size: 1.1rem; }
+  details[open] summary::after { content: '−'; }
+  details p { padding: 0 0 1rem; color: var(--muted); font-size: .9rem; }
+  .footer {
+    text-align: center; margin-top: 4rem;
+    color: var(--muted); font-size: .85rem; font-style: italic;
+  }
+  .footer a { color: var(--accent-dark); }
+</style>
+</head>
+<body>
+
+<div class="hero">
+  <div class="monogram">♡</div>
+  <h1>Welcome to Wedding HQ Studio</h1>
+  <p class="tagline">Your private wedding command center — no logins, no cloud, no subscriptions.</p>
+</div>
+
+<div class="divider">◆ Getting Started ◆</div>
+
+<div class="card-grid">
+  <div class="card">
+    <div class="step-num">1</div>
+    <h2>Open your planner file in a browser</h2>
+    <p>Double-click the <code>.html</code> file that matches your tier — <code>wedding-hq-lite.html</code>, <code>wedding-hq-standard.html</code>, or <code>wedding-hq-premium.html</code>. It opens directly in Chrome, Safari, Firefox, or Edge. No install needed.</p>
+  </div>
+
+  <div class="card">
+    <div class="step-num">2</div>
+    <h2>Your data stays on your device</h2>
+    <p>Everything you type is saved automatically to your browser's <code>localStorage</code> — private by design. No account, no server, no one else can see it. As long as you use the same browser on the same device, your data persists indefinitely.</p>
+  </div>
+
+  <div class="card">
+    <div class="step-num">3</div>
+    <h2>Back up your data regularly</h2>
+    <p>Open the <strong>Settings</strong> panel (gear icon, top-right) and click <strong>Export JSON</strong> to download a backup file. Store it in Google Drive, Dropbox, or email it to yourself. To restore, use <strong>Import JSON</strong> and select your backup file.</p>
+  </div>
+
+  <div class="card">
+    <div class="step-num">4</div>
+    <h2>Works offline, forever</h2>
+    <p>Once opened, Wedding HQ Studio works with no internet connection. Your purchase is a one-time download — no subscription, no expiry date, no forced updates.</p>
+  </div>
+
+  <div class="card">
+    <div class="step-num">5</div>
+    <h2>Print any section</h2>
+    <p>Use your browser's <strong>File → Print</strong> (or <kbd>Ctrl/Cmd + P</kbd>) from any section. The layout switches to a clean, ink-friendly print view automatically. Use "Save as PDF" to create shareable copies.</p>
+  </div>
+</div>
+
+<div class="divider">◆ FAQ ◆</div>
+
+<div class="faq">
+  <details>
+    <summary>Can I use this on multiple devices?</summary>
+    <p>Yes — just copy the <code>.html</code> file to any device and open it. To transfer your data between devices, export a JSON backup on one device and import it on the other via Settings.</p>
+  </details>
+  <details>
+    <summary>What if I clear my browser history or cache?</summary>
+    <p>Clearing cookies/localStorage will erase your saved data. Always keep a JSON backup (Settings → Export JSON) so you can restore it instantly.</p>
+  </details>
+  <details>
+    <summary>Can I share this file with my partner?</summary>
+    <p>Yes — your purchase covers personal household use. Share the file with your partner or co-planner on the same device or copy it to their device with a JSON export of your current data.</p>
+  </details>
+  <details>
+    <summary>How do I upgrade to a higher tier?</summary>
+    <p>Visit our <a href="https://productivemindai.etsy.com" target="_blank" rel="noopener">Etsy shop</a> and purchase the tier you'd like. Then export your current data as JSON, open the new tier file, and import your backup — your data carries over seamlessly.</p>
+  </details>
+  <details>
+    <summary>Which browser works best?</summary>
+    <p>Chrome and Edge give the best experience. Safari and Firefox work great too. Avoid opening the file from inside a ZIP archive without extracting first — always extract to a regular folder before opening.</p>
+  </details>
+  <details>
+    <summary>I see a blank screen / nothing loads.</summary>
+    <p>Make sure you extracted the ZIP and are opening the file from your computer (not directly from inside the ZIP). If it still doesn't load, right-click the file → Open With → Chrome (or your preferred browser).</p>
+  </details>
+</div>
+
+<div class="footer">
+  <p>Made with care by <a href="https://productivemindai.etsy.com" target="_blank" rel="noopener">ProductiveMind AI</a> &nbsp;·&nbsp; Questions? Message us on Etsy.</p>
+</div>
+
+</body>
+</html>
